@@ -17,25 +17,24 @@ export function log(message: string, source = "express") {
 
 export async function setupVite(app: Express, server: Server) {
   // Dynamic imports to avoid bundling vite in production
-  const { createServer: createViteServer, createLogger } = await import("vite");
+  const { createServer: createViteServer, createLogger, loadConfigFromFile } = await import("vite");
   const { nanoid } = await import("nanoid");
   
-  // Create a minimal config instead of importing the full vite config
-  const viteConfig = {
-    root: "../client",
-    server: {
-      middlewareMode: true,
-      hmr: { server },
-      allowedHosts: true as const,
-    },
-    configFile: false as const,
-    appType: "custom" as const,
-  };
+  // Load the actual vite config
+  const configFile = path.resolve(import.meta.dirname, "..", "vite.config.ts");
+  const { config } = await loadConfigFromFile({ command: "serve", mode: "development" }, configFile) || {};
   
   const viteLogger = createLogger();
   
   const vite = await createViteServer({
-    ...viteConfig,
+    ...config,
+    server: {
+      ...config?.server,
+      middlewareMode: true,
+      hmr: { server },
+      allowedHosts: true as const,
+    },
+    appType: "custom" as const,
     customLogger: {
       ...viteLogger,
       error: (msg: any, options: any) => {
@@ -60,7 +59,7 @@ export async function setupVite(app: Express, server: Server) {
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
-        `src="/src/main.tsx"`,
+        'src="/src/main.tsx"',
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
       const page = await vite.transformIndexHtml(url, template);

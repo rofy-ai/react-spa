@@ -10,7 +10,8 @@ LABEL fly_launch_runtime="Node.js"
 WORKDIR /usr/src/app
 
 # Set production environment
-ENV NODE_ENV="production"
+# ENV NODE_ENV="production"
+ENV NODE_ENV="development"
 
 
 # Throw-away build stage to reduce size of final image
@@ -27,11 +28,12 @@ RUN npm ci --include=dev
 # Copy application code
 COPY . .
 
-# Build application
-RUN npm run build
+# For development, we don't need to build, just run with tsx
+# Build application (uncomment for production)
+# RUN npm run build
 
-# Remove development dependencies
-RUN npm prune --omit=dev
+# Keep development dependencies for dev environment
+# RUN npm prune --omit=dev
 
 
 # Final stage for app image
@@ -42,4 +44,7 @@ COPY --from=build /usr/src/app /usr/src/app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 5001
-CMD [ "npm", "run", "start" ]
+# For development
+CMD [ "npm", "run", "dev" ]
+# For production (uncomment and comment above)
+# CMD [ "npm", "start" ]
