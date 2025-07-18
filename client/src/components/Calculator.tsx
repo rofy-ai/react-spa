@@ -104,7 +104,7 @@ export const Calculator = () => {
           variant="clear"
           className="col-span-2"
         >
-          Clear
+          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </CalculatorButton>
         <CalculatorButton
           onClick={() => performOperation('÷')}
