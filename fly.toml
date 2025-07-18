@@ -20,3 +20,11 @@ primary_region = 'bom'
   cpu_kind = 'shared'
   cpus = 1
   memory_mb = 512
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 3000
+    handlers = ["http"] # no public port defined, so it's private
