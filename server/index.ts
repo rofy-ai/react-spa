@@ -60,11 +60,17 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5001;
+  const portInternal = 3000;
   server.listen({
     port,
     host: "0.0.0.0",
     // reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+  });
+
+  // Internal-only
+  const internalServer = app.listen(portInternal, "0.0.0.0", () => {
+    log(`serving internal on port ${portInternal}`);
   });
 })();
