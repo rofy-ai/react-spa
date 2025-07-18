@@ -21,3 +21,8 @@ primary_region = 'bom'
   cpu_kind = 'shared'
   cpus = 1
   memory_mb = 512
+
+[[restart]]
+  policy = "never"
+  retries = 10
+  processes = ["app"]
