@@ -2,57 +2,157 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
-  
-  /* Bollywood-inspired colors */
-  --bollywood-red: hsl(0, 84.2%, 45.1%);
-  --bollywood-gold: hsl(43, 92.9%, 48%);
-  --bollywood-purple: hsl(258, 84%, 57%);
-  --bollywood-emerald: hsl(160, 84.1%, 39.4%);
-  --bollywood-orange: hsl(20, 94.6%, 53.3%);
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Glass UI Color Palette */
+    --background: 200 20% 98%;
+    --foreground: 210 40% 15%;
+
+    /* Glass surfaces with transparency */
+    --glass-surface: 210 30% 95%;
+    --glass-border: 210 20% 90%;
+    --glass-shadow: 210 40% 15%;
+
+    /* Calculator specific colors */
+    --calc-display: 210 50% 8%;
+    --calc-display-text: 210 20% 95%;
+    
+    /* Button variants */
+    --btn-number: 210 25% 92%;
+    --btn-number-text: 210 40% 20%;
+    --btn-operator: 260 85% 65%;
+    --btn-operator-text: 0 0% 100%;
+    --btn-equals: 120 70% 55%;
+    --btn-equals-text: 0 0% 100%;
+    --btn-clear: 0 75% 60%;
+    --btn-clear-text: 0 0% 100%;
+
+    /* Primary theme colors */
+    --primary: 260 85% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 25% 92%;
+    --secondary-foreground: 210 40% 20%;
+
+    --accent: 120 70% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Surface colors */
+    --card: 210 30% 95%;
+    --card-foreground: 210 40% 15%;
+
+    --popover: 210 30% 95%;
+    --popover-foreground: 210 40% 15%;
+
+    --muted: 210 25% 92%;
+    --muted-foreground: 210 30% 45%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 260 85% 65%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
-.dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+/* Glass UI Components and Effects */
+@layer components {
+  .glass-surface {
+    @apply bg-glass-surface/30 backdrop-blur-md border border-glass-border/50;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+  
+  .glass-button {
+    @apply glass-surface rounded-2xl transition-all duration-300 active:scale-95;
+    @apply hover:bg-glass-surface/50 hover:shadow-lg;
+  }
+  
+  .glass-display {
+    @apply bg-calc-display/90 backdrop-blur-lg border border-glass-border/30;
+    @apply text-calc-display-text rounded-3xl;
+    box-shadow: inset 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-number {
+    @apply bg-btn-number/60 text-btn-number-text hover:bg-btn-number/80;
+  }
+  
+  .btn-operator {
+    @apply bg-btn-operator/90 text-btn-operator-text hover:bg-btn-operator;
+  }
+  
+  .btn-equals {
+    @apply bg-btn-equals/90 text-btn-equals-text hover:bg-btn-equals;
+  }
+  
+  .btn-clear {
+    @apply bg-btn-clear/90 text-btn-clear-text hover:bg-btn-clear;
+  }
+
+  .animate-press {
+    @apply transition-transform duration-100 active:scale-95;
+  }
 }
 
 @layer base {
@@ -61,90 +161,8 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gray-50 text-foreground;
-  }
-}
-
-@layer utilities {
-  .text-bollywood-red {
-    color: var(--bollywood-red);
-  }
-  
-  .text-bollywood-gold {
-    color: var(--bollywood-gold);
-  }
-  
-  .text-bollywood-purple {
-    color: var(--bollywood-purple);
-  }
-  
-  .text-bollywood-emerald {
-    color: var(--bollywood-emerald);
-  }
-  
-  .text-bollywood-orange {
-    color: var(--bollywood-orange);
-  }
-  
-  .bg-bollywood-red {
-    background-color: var(--bollywood-red);
-  }
-  
-  .bg-bollywood-gold {
-    background-color: var(--bollywood-gold);
-  }
-  
-  .bg-bollywood-purple {
-    background-color: var(--bollywood-purple);
-  }
-  
-  .bg-bollywood-emerald {
-    background-color: var(--bollywood-emerald);
-  }
-  
-  .bg-bollywood-orange {
-    background-color: var(--bollywood-orange);
-  }
-  
-  .border-bollywood-red {
-    border-color: var(--bollywood-red);
-  }
-  
-  .border-bollywood-gold {
-    border-color: var(--bollywood-gold);
-  }
-  
-  .hover\:bg-bollywood-red:hover {
-    background-color: var(--bollywood-red);
-  }
-  
-  .hover\:bg-bollywood-gold:hover {
-    background-color: var(--bollywood-gold);
-  }
-  
-  .hover\:text-bollywood-red:hover {
-    color: var(--bollywood-red);
-  }
-  
-  .hover\:text-bollywood-gold:hover {
-    color: var(--bollywood-gold);
-  }
-  
-  .focus\:ring-bollywood-red:focus {
-    --tw-ring-color: var(--bollywood-red);
-  }
-  
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-  
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    @apply bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50;
+    @apply text-foreground min-h-screen;
+    background-attachment: fixed;
   }
 }
