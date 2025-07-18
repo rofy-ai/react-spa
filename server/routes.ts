@@ -24,6 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // BEGIN SERVER
   app.post("/api/updateFile", async (req, res) => {
     try {
       const { filePath: relativePath, content } = req.body;
@@ -87,6 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  // END SERVER
 
   const httpServer = createServer(app);
   return httpServer;
