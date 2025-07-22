@@ -181,6 +181,8 @@ function restartViteDevServer() {
   // 🧠 Start the user API process
   startUserApiServer();
 
+  server.listen({port: 5003, host: "0.0.0.0" });
+
   const port = 5001;
   server.listen({ port, host: "0.0.0.0" }, () => {
     log(`Main server listening on port ${port}`);
