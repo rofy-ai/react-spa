@@ -1,19 +1,18 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic, log } from "./vite";
-import { spawn, ChildProcess } from "child_process";
+import { spawn, ChildProcess, fork } from "child_process";
 import path from "path";
-import { fileURLToPath } from 'url';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import cors from 'cors';
+import { fileURLToPath } from "url";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import cors from "cors";
+import http from "http";
 
 const app = express();
 
 // ✅ Allow Vite dev server on 5174 to call the Express server on 5001
 app.use(cors());
-
-// Handle preflight requests (important for POST with JSON)
-app.options('*', cors());
+app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -21,10 +20,46 @@ app.use(express.urlencoded({ extended: false }));
 let viteProcess: ChildProcess | null = null;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const userAppDir = path.resolve(__dirname, "../client");
 
-// Logging middleware
+let userApiProcess: ChildProcess | null = null;
+
+// 🧠 Start user API server in separate process (isolated)
+function startUserApiServer() {
+  try {
+    const scriptPath = path.join(__dirname, "user-api-entry.js"); // compiled .js
+    const child = fork(scriptPath, [], {
+      stdio: "inherit",
+    });
+    userApiProcess = child;
+    console.log("✅ User API server process forked");
+  } catch (err) {
+    console.error("❌ Failed to start user API server:", err);
+  }
+}
+
+function stopUserApiServer() {
+  if (userApiProcess) {
+    userApiProcess.kill("SIGTERM");
+    userApiProcess = null;
+  }
+}
+
+// 💓 Check if 5002 server is alive
+const isUserApiAlive = async (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const req = http.get("http://localhost:5002/__health", (res) => {
+      resolve(res.statusCode === 200);
+    });
+    req.on("error", () => resolve(false));
+    req.setTimeout(300, () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+};
+
+// 🛡 Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -53,29 +88,50 @@ app.use((req, res, next) => {
   next();
 });
 
+// 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
+app.use(async (req, res, next) => {
+  if (req.originalUrl === "/api/glytUpdateFiles") {
+    return next();
+  }
+
+  if (req.originalUrl.startsWith("/api/")) {
+    const alive = await isUserApiAlive();
+    if (!alive) {
+      return res.status(502).json({ error: "User API server unavailable" });
+    }
+
+    console.log(`Proxying to 5002: ${req.method} ${req.originalUrl}`);
+    return createProxyMiddleware({
+      target: "http://localhost:5002",
+      changeOrigin: true,
+    })(req, res, next);
+  }
+
+  return next();
+});
+
+// 🔁 Existing Vite dev server proxy (untouched)
 if (app.get("env") === "development") {
   console.log("Development mode detected, setting up Vite middleware");
   app.use(
-    '/',
+    "/",
     createProxyMiddleware({
-      target: 'http://localhost:5173',
+      target: "http://localhost:5173",
       changeOrigin: true,
       ws: true,
-      // Skip proxy for /api/* routes
       pathFilter: (path, req) => {
         return !/^\/api(\/|$)/.test(path);
-      }
+      },
     })
   );
 }
 
-// Vite restart endpoint
+// 🔁 Vite restart endpoint
 app.post("/api/restart-vite", (req, res) => {
   restartViteDevServer();
   res.json({ status: "vite restarted" });
 });
 
-// Start Vite in a child process
 function startViteDevServer() {
   const vite = spawn("npx", ["vite"], {
     cwd: userAppDir,
@@ -116,16 +172,17 @@ function restartViteDevServer() {
     throw err;
   });
 
-  // If in development, start Vite in child process
   if (app.get("env") === "development") {
     startViteDevServer();
   } else {
     serveStatic(app);
   }
 
-  const port = 5001;
+  // 🧠 Start the user API process
+  startUserApiServer();
 
+  const port = 5001;
   server.listen({ port, host: "0.0.0.0" }, () => {
-    log(`serving on port ${port}`);
+    log(`Main server listening on port ${port}`);
   });
 })();
