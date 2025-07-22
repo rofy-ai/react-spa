@@ -43,9 +43,8 @@ FROM base
 COPY --from=build /usr/src/app /usr/src/app
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 5001
-EXPOSE 5173
+EXPOSE 5002
 # For development
-CMD [ "npm", "run", "dev-server" ]
+CMD [ "npm", "run", "dev" ]
 # For production (uncomment and comment above)
 # CMD [ "npm", "start" ]
