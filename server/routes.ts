@@ -3,75 +3,71 @@ import { createServer, type Server } from "http";
 import { promises as fs } from "fs";
 import path from "path";
 
+interface FileUpdatePayload {
+  filePath: string;
+  content: string;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
-
-  // BEGIN SERVER
   app.post("/api/glytUpdateFiles", async (req, res) => {
-    try {
-      const { filePath: relativePath, content } = req.body;
+    const files: FileUpdatePayload[] = req.body;
 
-      // Validate input
-      if (!relativePath || typeof relativePath !== 'string') {
-        return res.status(400).json({
-          error: "Missing or invalid file path",
-          message: "File path is required and must be a string"
-        });
-      }
-
-      if (content === undefined || content === null) {
-        return res.status(400).json({
-          error: "Missing content",
-          message: "File content is required"
-        });
-      }
-
-      // Security check: prevent directory traversal attacks
-      const normalizedPath = path.normalize(relativePath);
-      if (normalizedPath.includes('..') || path.isAbsolute(normalizedPath)) {
-        return res.status(403).json({
-          error: "Invalid file path",
-          message: "File path cannot contain '..' or be absolute"
-        });
-      }
-
-      // Resolve to absolute path within the project directory
-      const projectRoot = process.cwd();
-      const absolutePath = path.join(projectRoot, normalizedPath);
-
-      // Ensure the file is within the project directory
-      const resolvedPath = path.resolve(absolutePath);
-      const resolvedProjectRoot = path.resolve(projectRoot);
-      if (!resolvedPath.startsWith(resolvedProjectRoot)) {
-        return res.status(403).json({
-          error: "Access denied",
-          message: "File must be within the project directory"
-        });
-      }
-
-      // Create directory if it doesn't exist
-      const dir = path.dirname(absolutePath);
-      await fs.mkdir(dir, { recursive: true });
-
-      // Write the file
-      await fs.writeFile(absolutePath, content, 'utf8');
-
-      res.json({
-        message: "File updated successfully",
-        filePath: relativePath,
-        timestamp: new Date().toISOString(),
-      });
-
-    } catch (error) {
-      console.error("Error updating file:", error);
-      res.status(500).json({ 
-        error: "Failed to update file", 
-        message: error instanceof Error ? error.message : "Unknown error"
+    if (!Array.isArray(files)) {
+      return res.status(400).json({
+        error: "Invalid input",
+        message: "Request body must be an array of file objects",
       });
     }
+
+    const results: any[] = [];
+
+    for (const file of files) {
+      const { filePath: relativePath, content } = file;
+
+      try {
+        if (!relativePath || typeof relativePath !== "string") {
+          throw new Error("Missing or invalid file path");
+        }
+
+        if (content === undefined || content === null) {
+          throw new Error("Missing content");
+        }
+
+        const normalizedPath = path.normalize(relativePath);
+        if (normalizedPath.includes("..") || path.isAbsolute(normalizedPath)) {
+          throw new Error("Invalid file path (cannot contain '..' or be absolute)");
+        }
+
+        const projectRoot = process.cwd();
+        const absolutePath = path.join(projectRoot, normalizedPath);
+
+        const resolvedPath = path.resolve(absolutePath);
+        const resolvedProjectRoot = path.resolve(projectRoot);
+        if (!resolvedPath.startsWith(resolvedProjectRoot)) {
+          throw new Error("Access denied: path must be within project directory");
+        }
+
+        const dir = path.dirname(absolutePath);
+        await fs.mkdir(dir, { recursive: true });
+        await fs.writeFile(absolutePath, content, "utf8");
+
+        results.push({
+          filePath: relativePath,
+          status: "success",
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        results.push({
+          filePath: file.filePath,
+          status: "error",
+          message: err instanceof Error ? err.message : "Unknown error",
+        });
+      }
+    }
+
+    res.json({ results });
   });
-  // END SERVER
 
   const httpServer = createServer(app);
   return httpServer;
 }
-
