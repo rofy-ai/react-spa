@@ -65,6 +65,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
 
+    await fetch("http://localhost:5001/api/restart-backend", {
+      method: "POST",
+    });
+
     res.json({ results });
   });
 

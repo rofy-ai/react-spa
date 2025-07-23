@@ -45,6 +45,37 @@ function stopUserApiServer() {
   }
 }
 
+
+function startViteDevServer() {
+  const vite = spawn("npx", ["vite"], {
+    cwd: userAppDir,
+    stdio: "inherit",
+    env: { ...process.env, FORCE_COLOR: "1" },
+  });
+
+  vite.on("exit", (code, signal) => {
+    log(`vite exited with code ${code}, signal ${signal}`);
+  });
+
+  vite.on("error", (err) => {
+    log("vite process error:", err);
+  });
+
+  viteProcess = vite;
+}
+
+function stopViteDevServer() {
+  if (viteProcess) {
+    viteProcess.kill("SIGTERM");
+    viteProcess = null;
+  }
+}
+
+function restartViteDevServer() {
+  stopViteDevServer();
+  startViteDevServer();
+}
+
 // 💓 Check if 5002 server is alive
 const isUserApiAlive = async (): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -90,7 +121,7 @@ app.use((req, res, next) => {
 
 // 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
-  if (req.originalUrl === "/api/glytUpdateFiles") {
+  if (req.originalUrl === "/api/glytUpdateFiles" || req.originalUrl === "/api/restart-backend") {
     return next();
   }
 
@@ -132,35 +163,13 @@ app.post("/api/restart-vite", (req, res) => {
   res.json({ status: "vite restarted" });
 });
 
-function startViteDevServer() {
-  const vite = spawn("npx", ["vite"], {
-    cwd: userAppDir,
-    stdio: "inherit",
-    env: { ...process.env, FORCE_COLOR: "1" },
-  });
+app.post("/api/restart-backend", (req, res) => {
+  console.log("Restarting user API server...");
+  stopUserApiServer();
+  startUserApiServer();
+  res.json({ status: "user API restarted" });
+});
 
-  vite.on("exit", (code, signal) => {
-    log(`vite exited with code ${code}, signal ${signal}`);
-  });
-
-  vite.on("error", (err) => {
-    log("vite process error:", err);
-  });
-
-  viteProcess = vite;
-}
-
-function stopViteDevServer() {
-  if (viteProcess) {
-    viteProcess.kill("SIGTERM");
-    viteProcess = null;
-  }
-}
-
-function restartViteDevServer() {
-  stopViteDevServer();
-  startViteDevServer();
-}
 
 (async () => {
   const server = await registerRoutes(app);
@@ -180,8 +189,6 @@ function restartViteDevServer() {
 
   // 🧠 Start the user API process
   startUserApiServer();
-
-  server.listen({port: 5003, host: "0.0.0.0" });
 
   const port = 5001;
   server.listen({ port, host: "0.0.0.0" }, () => {
