@@ -8,6 +8,12 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
 
+const allowedRoutes = [
+  '/api/rofyDownloadFiles',
+  '/api/glytUpdateFiles',
+  '/api/restart-backend',
+];
+
 const app = express();
 
 // ✅ Allow Vite dev server on 5174 to call the Express server on 5001
@@ -27,7 +33,7 @@ let userApiProcess: ChildProcess | null = null;
 // 🧠 Start user API server in separate process (isolated)
 function startUserApiServer() {
   try {
-    const scriptPath = path.join(__dirname, "user-api-entry.js"); // compiled .js
+    const scriptPath = path.join(__dirname, "backend-entry.js"); // compiled .js
     const child = fork(scriptPath, [], {
       stdio: "inherit",
     });
@@ -57,7 +63,7 @@ function startViteDevServer() {
     log(`vite exited with code ${code}, signal ${signal}`);
   });
 
-  vite.on("error", (err) => {
+  vite.on("error", (err: any) => {
     log("vite process error:", err);
   });
 
@@ -121,7 +127,8 @@ app.use((req, res, next) => {
 
 // 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
-  if (req.originalUrl === "/api/glytUpdateFiles" || req.originalUrl === "/api/restart-backend") {
+  console.log(`Received request: ${req.originalUrl}`);
+  if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
     return next();
   }
 
@@ -170,9 +177,12 @@ app.post("/api/restart-backend", (req, res) => {
   res.json({ status: "user API restarted" });
 });
 
+app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloads')));
 
 (async () => {
   const server = await registerRoutes(app);
+
+  console.log('Serving static from:', path.join(__dirname, '../public/downloads'));
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

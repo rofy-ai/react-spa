@@ -4,7 +4,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 
-export async function registerUserRoutes(app: Express): Promise<Server> {
+export async function registerBackendRoutes(app: Express): Promise<Server> {
   const userApiDir = path.resolve(process.cwd(), "server/apis"); // adjust as needed
 
   app.get("/__health", (req, res) => {

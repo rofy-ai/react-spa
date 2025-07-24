@@ -1,5 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerUserRoutes } from "./userRoutes";
+import { registerBackendRoutes } from "./backend-routes";
 import { serveStatic, log } from "./vite";
 import { spawn, ChildProcess } from "child_process";
 import path from "path";
@@ -107,7 +107,7 @@ if (app.get("env") === "development") {
 
 (async () => {
   try {
-    const server = await registerUserRoutes(app);
+    const server = await registerBackendRoutes(app);
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;

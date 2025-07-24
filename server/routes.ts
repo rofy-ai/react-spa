@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { promises as fs } from "fs";
 import path from "path";
+import { createProjectZip } from "./zip";
+import { fileURLToPath } from "url";
 
 interface FileUpdatePayload {
   filePath: string;
@@ -71,6 +73,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     res.json({ results });
   });
+
+  app.post("/api/rofyDownloadFiles", async (req, res) => {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const { projectName } = req.body;
+    const sanitized = projectName.replace(/[^a-zA-Z0-9-_]/g, "_");
+    const zipPath = await createProjectZip({ projectName: sanitized });
+
+    const zipExists = await fs.access(zipPath).then(() => true).catch(() => false);
+    if (!zipExists) {
+      return res.status(500).json({ success: false, error: "Zip creation failed" });
+    }
+
+    const fileName = path.basename(zipPath);
+    const publicPath = `/downloads/${fileName}`;
+    const publicFilePath = path.join(__dirname, "../public/downloads", fileName);
+
+    // Move file to public folder
+    await fs.rename(zipPath, publicFilePath);
+
+    await fetch("http://localhost:5001/api/restart-backend", {
+      method: "POST",
+    });
+
+    return res.json({
+      success: true,
+      downloadUrl: publicPath, // relative browser-accessible path
+    });
+
+  } catch (err) {
+    console.error("Error in rofyDownloadFiles:", err);
+    return res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
 
   const httpServer = createServer(app);
   return httpServer;

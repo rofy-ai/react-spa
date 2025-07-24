@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUserRoutes } from "./userRoutes";
+import { registerBackendRoutes } from "./backend-routes";
 
 const app = express();
 app.use(express.json());
@@ -12,7 +12,7 @@ app.get("/__health", (req, res) => {
 
 (async () => {
   try {
-    const server = await registerUserRoutes(app);
+    const server = await registerBackendRoutes(app);
     const port = 5002;
     server.listen(port, () => {
       console.log(`✅ User API server running on port ${port}`);
