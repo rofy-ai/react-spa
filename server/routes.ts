@@ -89,7 +89,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const fileName = path.basename(zipPath);
     const publicPath = `/downloads/${fileName}`;
-    const publicFilePath = path.join(__dirname, "../public/downloads", fileName);
+    const publicDir = path.join(__dirname, "../public/downloads");
+    const dirExists = await fs.access(publicDir).then(() => true).catch(() => false);
+    if (!dirExists) {
+      await fs.mkdir(publicDir, { recursive: true });
+    }
+
+    const publicFilePath = path.join(publicDir, fileName);
 
     // Move file to public folder
     await fs.rename(zipPath, publicFilePath);
