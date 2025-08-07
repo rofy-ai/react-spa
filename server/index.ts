@@ -20,6 +20,29 @@ const app = express();
 app.use(cors());
 app.options("*", cors());
 
+// 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
+app.use(async (req, res, next) => {
+  console.log(`Received request: ${req.originalUrl}`);
+  if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
+    return next();
+  }
+
+  if (req.originalUrl.startsWith("/api/")) {
+    const alive = await isUserApiAlive();
+    if (!alive) {
+      return res.status(502).json({ error: "User API server unavailable" });
+    }
+
+    console.log(`Proxying to 5002: ${req.method} ${req.originalUrl}`);
+    return createProxyMiddleware({
+      target: "http://localhost:5002",
+      changeOrigin: true,
+    })(req, res, next);
+  }
+
+  return next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -125,28 +148,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
-app.use(async (req, res, next) => {
-  console.log(`Received request: ${req.originalUrl}`);
-  if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
-    return next();
-  }
-
-  if (req.originalUrl.startsWith("/api/")) {
-    const alive = await isUserApiAlive();
-    if (!alive) {
-      return res.status(502).json({ error: "User API server unavailable" });
-    }
-
-    console.log(`Proxying to 5002: ${req.method} ${req.originalUrl}`);
-    return createProxyMiddleware({
-      target: "http://localhost:5002",
-      changeOrigin: true,
-    })(req, res, next);
-  }
-
-  return next();
-});
 
 // 🔁 Existing Vite dev server proxy (untouched)
 if (app.get("env") === "development") {
