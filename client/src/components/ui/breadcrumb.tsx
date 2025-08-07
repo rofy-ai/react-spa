@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { IoChevronForward, IoEllipsisHorizontal } from "react-icons/io5"
+import { ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -98,7 +98,7 @@ const BreadcrumbEllipsis = ({
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
-    <IoEllipsisHorizontal className="h-4 w-4" />
+    <MoreHorizontal className="h-4 w-4" />
     <span className="sr-only">More</span>
   </span>
 )

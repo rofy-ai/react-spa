@@ -1,5 +1,6 @@
-import { TodoApp } from '../components/TodoApp';
 
 export default function Home() {
-  return <TodoApp />;
+  return <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <p>Start prompting (or editing) to see magic happen :)</p>
+    </div>;
 }
