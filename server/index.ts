@@ -12,6 +12,7 @@ const allowedRoutes = [
   '/api/rofyDownloadFiles',
   '/api/glytUpdateFiles',
   '/api/restart-backend',
+  '/api/rofyLogs'
 ];
 
 const app = express();
@@ -22,7 +23,6 @@ app.options("*", cors());
 
 // 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
-  console.log(`Received request: ${req.originalUrl}`);
   if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
     return next();
   }
@@ -53,14 +53,35 @@ const userAppDir = path.resolve(__dirname, "../client");
 
 let userApiProcess: ChildProcess | null = null;
 
+function logErrors(message: string) {
+  console.log(`[${new Date().toISOString()}] ${message}`);
+  fetch('http://localhost:3000/api/logs', {
+    method: 'POST',
+    body: JSON.stringify({ ts: Date.now(), kind: 'error', data: message }),
+    headers: { 'Content-Type': 'application/json' }
+  }).catch(err => {
+    console.error("Failed to send log:", err);
+  });
+}
+
 // 🧠 Start user API server in separate process (isolated)
 function startUserApiServer() {
   try {
     const scriptPath = path.join(__dirname, "backend-entry.js"); // compiled .js
     const child = fork(scriptPath, [], {
-      stdio: "inherit",
+      stdio: ['ignore', 'ignore', 'pipe', 'ipc'], // add 'ipc' here for fork
+      env: { ...process.env, FORCE_COLOR: "1" },
     });
     userApiProcess = child;
+
+    child.stderr?.on('data', (buf) => {
+      // const block = (buf.toString().match(/\[user-api\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
+      const block = buf.toString();
+      console.log("INSIDE HERE", block);
+      if (!block.trim()) return;
+      logErrors(block.trim());
+    });
+
     console.log("✅ User API server process forked");
   } catch (err) {
     console.error("❌ Failed to start user API server:", err);
@@ -78,7 +99,7 @@ function stopUserApiServer() {
 function startViteDevServer() {
   const vite = spawn("npx", ["vite"], {
     cwd: userAppDir,
-    stdio: "inherit",
+    stdio: ['ignore', 'pipe', 'pipe']  , // inherit for main process, pipe for logging
     env: { ...process.env, FORCE_COLOR: "1" },
   });
 
@@ -89,6 +110,13 @@ function startViteDevServer() {
   vite.on("error", (err: any) => {
     log("vite process error:", err);
   });
+
+  vite.stderr.on('data',  buf => {
+    const block = (buf.toString().match(/\[vite\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
+    console.log("INSIDE HERE", block);
+    if (!block.trim()) return;
+    logErrors(block.trim());
+  }); 
 
   viteProcess = vite;
 }
