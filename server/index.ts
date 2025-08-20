@@ -10,7 +10,7 @@ import http from "http";
 
 const allowedRoutes = [
   '/api/rofyDownloadFiles',
-  '/api/glytUpdateFiles',
+  '/api/rofyUpdateFiles',
   '/api/restart-backend',
   '/api/rofyLogs'
 ];
@@ -21,7 +21,7 @@ const app = express();
 app.use(cors());
 app.options("*", cors());
 
-// 🔁 Only handle /api/glytUpdateFiles locally; proxy all other /api/* to 5002
+// 🔁 Only handle /api/rofyUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
   if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
     return next();
