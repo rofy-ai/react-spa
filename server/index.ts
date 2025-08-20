@@ -8,16 +8,19 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
 
+const VOLUME_ROOT = "/data";            // <— hardcoded volume root
+const CLIENT_DIR  = path.join(VOLUME_ROOT, "client");
+
 const allowedRoutes = [
-  '/api/rofyDownloadFiles',
-  '/api/rofyUpdateFiles',
-  '/api/restart-backend',
-  '/api/rofyLogs'
+  "/api/rofyDownloadFiles",
+  "/api/rofyUpdateFiles",
+  "/api/restart-backend",
+  "/api/rofyLogs",
 ];
 
 const app = express();
 
-// ✅ Allow Vite dev server on 5174 to call the Express server on 5001
+// ✅ Allow Vite dev server on 5173 to call the Express server on 5001
 app.use(cors());
 app.options("*", cors());
 
@@ -49,40 +52,39 @@ app.use(express.urlencoded({ extended: false }));
 let viteProcess: ChildProcess | null = null;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const userAppDir = path.resolve(__dirname, "../client");
 
 let userApiProcess: ChildProcess | null = null;
 
 function logErrors(message: string) {
   console.log(`[${new Date().toISOString()}] ${message}`);
-  fetch('http://localhost:3000/api/logs', {
-    method: 'POST',
-    body: JSON.stringify({ ts: Date.now(), kind: 'error', data: message }),
-    headers: { 'Content-Type': 'application/json' }
-  }).catch(err => {
+  fetch("http://localhost:3000/api/logs", {
+    method: "POST",
+    body: JSON.stringify({ ts: Date.now(), kind: "error", data: message }),
+    headers: { "Content-Type": "application/json" },
+  }).catch((err) => {
     console.error("Failed to send log:", err);
   });
 }
 
 // 🧠 Start user API server in separate process (isolated)
+// Runs from /data so it reads the live volume tree.
 function startUserApiServer() {
   try {
     const scriptPath = path.join(__dirname, "backend-entry.js"); // compiled .js
     const child = fork(scriptPath, [], {
-      stdio: ['ignore', 'ignore', 'pipe', 'ipc'], // add 'ipc' here for fork
+      stdio: ["ignore", "ignore", "pipe", "ipc"],
+      cwd: VOLUME_ROOT, // <— key
       env: { ...process.env, FORCE_COLOR: "1" },
     });
     userApiProcess = child;
 
-    child.stderr?.on('data', (buf) => {
-      // const block = (buf.toString().match(/\[user-api\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
+    child.stderr?.on("data", (buf) => {
       const block = buf.toString();
-      console.log("INSIDE HERE", block);
       if (!block.trim()) return;
       logErrors(block.trim());
     });
 
-    console.log("✅ User API server process forked");
+    console.log("✅ User API server process forked (cwd: /data)");
   } catch (err) {
     console.error("❌ Failed to start user API server:", err);
   }
@@ -95,11 +97,10 @@ function stopUserApiServer() {
   }
 }
 
-
 function startViteDevServer() {
   const vite = spawn("npx", ["vite"], {
-    cwd: userAppDir,
-    stdio: ['ignore', 'pipe', 'pipe']  , // inherit for main process, pipe for logging
+    cwd: CLIENT_DIR, // <— Vite runs inside the volume client dir
+    stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, FORCE_COLOR: "1" },
   });
 
@@ -111,14 +112,14 @@ function startViteDevServer() {
     log("vite process error:", err);
   });
 
-  vite.stderr.on('data',  buf => {
-    const block = (buf.toString().match(/\[vite\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
-    console.log("INSIDE HERE", block);
+  vite.stderr.on("data", (buf) => {
+    const block = (buf.toString().match(/\[vite\]([\s\S]*?)^\s*at/m) || [])[1] ?? "";
     if (!block.trim()) return;
     logErrors(block.trim());
-  }); 
+  });
 
   viteProcess = vite;
+  console.log("✅ Vite dev server spawned (cwd: /data/client)");
 }
 
 function stopViteDevServer() {
@@ -150,7 +151,7 @@ const isUserApiAlive = async (): Promise<boolean> => {
 // 🛡 Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const p = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
@@ -161,21 +162,20 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+    if (p.startsWith("/api")) {
+      let logLine = `${req.method} ${p} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        try {
+          logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        } catch {}
       }
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
+      if (logLine.length > 80) logLine = logLine.slice(0, 79) + "…";
       log(logLine);
     }
   });
 
   next();
 });
-
 
 // 🔁 Existing Vite dev server proxy (untouched)
 if (app.get("env") === "development") {
@@ -186,32 +186,31 @@ if (app.get("env") === "development") {
       target: "http://localhost:5173",
       changeOrigin: true,
       ws: true,
-      pathFilter: (path, req) => {
-        return !/^\/api(\/|$)/.test(path);
-      },
+      pathFilter: (p) => !/^\/api(\/|$)/.test(p),
     })
   );
 }
 
 // 🔁 Vite restart endpoint
-app.post("/api/restart-vite", (req, res) => {
+app.post("/api/restart-vite", (_req, res) => {
   restartViteDevServer();
   res.json({ status: "vite restarted" });
 });
 
-app.post("/api/restart-backend", (req, res) => {
+app.post("/api/restart-backend", (_req, res) => {
   console.log("Restarting user API server...");
   stopUserApiServer();
   startUserApiServer();
   res.json({ status: "user API restarted" });
 });
 
-app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloads')));
+// Serve downloads from the volume
+app.use("/api/downloads", express.static(path.join(VOLUME_ROOT, "public", "downloads")));
 
 (async () => {
   const server = await registerRoutes(app);
 
-  console.log('Serving static from:', path.join(__dirname, '../public/downloads'));
+  console.log("Serving static from:", path.join(VOLUME_ROOT, "public", "downloads"));
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -223,6 +222,7 @@ app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloa
   if (app.get("env") === "development") {
     startViteDevServer();
   } else {
+    // If you serve built assets in production, ensure your build outputs to /data/dist/public
     serveStatic(app);
   }
 
