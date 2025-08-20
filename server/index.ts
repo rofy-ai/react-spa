@@ -8,13 +8,13 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
 
-const VOLUME_ROOT = "/data/app";    
+const VOLUME_ROOT = "/data";    
 
 // hard-enforce CWD for the node process (main server)
 try {
   process.chdir(VOLUME_ROOT);
 } catch (e) {
-  console.error("Failed to chdir to /data/app:", e);
+  console.error("Failed to chdir to /data:", e);
 }
         // <— hardcoded volume root
 const CLIENT_DIR  = path.join(VOLUME_ROOT, "client");
@@ -75,7 +75,7 @@ function logErrors(message: string) {
 }
 
 // 🧠 Start user API server in separate process (isolated)
-// Runs from /data/app so it reads the live volume tree.
+// Runs from /data so it reads the live volume tree.
 function startUserApiServer() {
   try {
     // Prefer the volume copy; fall back to image copy if not found
@@ -85,7 +85,7 @@ function startUserApiServer() {
       path.join(__dirname, "backend-entry.js"), // fallback
     ];
     const scriptPath = candidates.find(p => fs.existsSync(p))!;
-    if (!scriptPath) throw new Error("backend-entry.js not found in /data/app or image");
+    if (!scriptPath) throw new Error("backend-entry.js not found in /data or image");
 
     const child = fork(scriptPath, [], {
       stdio: ["ignore", "ignore", "pipe", "ipc"],
@@ -100,7 +100,7 @@ function startUserApiServer() {
       logErrors(block.trim());
     });
 
-    console.log("✅ User API server process forked:", scriptPath, "(cwd: /data/app)");
+    console.log("✅ User API server process forked:", scriptPath, "(cwd: /data)");
   } catch (err) {
     console.error("❌ Failed to start user API server:", err);
   }
@@ -135,7 +135,7 @@ function startViteDevServer() {
   });
 
   viteProcess = vite;
-  console.log("✅ Vite dev server spawned (cwd: /data/app/client)");
+  console.log("✅ Vite dev server spawned (cwd: /data/client)");
 }
 
 function stopViteDevServer() {
@@ -238,7 +238,7 @@ app.use("/api/downloads", express.static(path.join(VOLUME_ROOT, "public", "downl
   if (app.get("env") === "development") {
     startViteDevServer();
   } else {
-    // If you serve built assets in production, ensure your build outputs to /data/app/dist/public
+    // If you serve built assets in production, ensure your build outputs to /data/dist/public
     serveStatic(app);
   }
 
