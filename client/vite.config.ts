@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 // Hardcoded to the volume paths, as requested
-const CLIENT_ROOT = "/data/client";
-const OUT_DIR = "/data/dist/public";
+const CLIENT_ROOT = "/data/app/client";
+const OUT_DIR = "/data/app/dist/public";
 
 export default defineConfig({
   plugins: [react()],
@@ -26,7 +26,7 @@ export default defineConfig({
       strict: true,
       // deny dotfiles still
       deny: ["**/.*"],
-      // (no allow list; root is already /data/client)
+      // (no allow list; root is already /data/app/client)
     },
   },
 });

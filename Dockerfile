@@ -33,11 +33,16 @@ RUN tar -C /usr/src/app -cf /seed.tar .
 EXPOSE 5001
 
 # 👇 Seed /data only if empty, then run from /data
-CMD bash -lc '\
-  if [ -z "$(ls -A /data 2>/dev/null || true)" ]; then \
-    echo "[seed] /data empty → extracting seed…"; \
-    mkdir -p /data && tar -xf /seed.tar -C /data; \
-    echo "[seed] done."; \
-  fi; \
-  cd /data && npm run dev-server \
+CMD bash -lc '
+  set -e
+  APPDIR=/data/app
+  mkdir -p "$APPDIR"
+  if [ ! -f "$APPDIR/package.json" ]; then
+    echo "[seed] bootstrapping $APPDIR"
+    tar -xf /seed.tar -C "$APPDIR"
+    echo "[seed] done."
+  fi
+  cd "$APPDIR"
+  npm run dev-server
 '
+
