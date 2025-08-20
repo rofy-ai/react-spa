@@ -2,31 +2,27 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// Hardcoded to the volume paths, as requested
-const CLIENT_ROOT = "/data/app/client";
-const OUT_DIR = "/data/app/dist/public";
-
 export default defineConfig({
-  plugins: [react()],
-  root: CLIENT_ROOT,
+  plugins: [
+    react(),
+  ],
   resolve: {
     alias: {
-      "@": path.join(CLIENT_ROOT, "src"),
-      "@shared": path.join(CLIENT_ROOT, "shared"),
-      "@assets": path.join(CLIENT_ROOT, "attached_assets"),
+      "@": path.resolve(import.meta.dirname, "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },
+  root: path.resolve(import.meta.dirname),
   build: {
-    outDir: OUT_DIR,
+    outDir: path.resolve(import.meta.dirname, "../dist/public"),
     emptyOutDir: true,
   },
   server: {
     host: true,
     fs: {
       strict: true,
-      // deny dotfiles still
       deny: ["**/.*"],
-      // (no allow list; root is already /data/app/client)
     },
   },
 });
