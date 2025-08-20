@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
+import fs from "fs";
 
 const VOLUME_ROOT = "/data";    
 
