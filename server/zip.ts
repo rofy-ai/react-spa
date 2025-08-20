@@ -51,6 +51,7 @@ export function createProjectZip(options: ZipOptions = {}): Promise<string> {
       '.dockerignore',
       'dist',
       'public/downloads',
+      'docker-entrypoint.sh',
       outputFileName, // Exclude the zip file being written
       ...additionalExcludes
     ];
