@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
 # If you like bash for the entrypoint
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash coreutils
 
 # --- Bake the seed into the image ---
 WORKDIR /opt/appseed
