@@ -34,13 +34,11 @@ if [ ! -f "${TARGET_ROOT}/package.json" ]; then
 
   # Verify again after copy
   if [ ! -f "${TARGET_ROOT}/package.json" ]; then
+  echo "[seed] package.json not found at ${TARGET_ROOT} → seeding from ${APPSEED}"
+  cp -an "${APPSEED}/." "${WORKDIR}/"
+  if [ ! -f "${TARGET_ROOT}/package.json" ]; then
     echo "[seed][ERROR] Still no package.json at ${TARGET_ROOT}"
-    echo "[seed] Contents of ${TARGET_ROOT}:"
     ls -la "${TARGET_ROOT}" || true
-    echo "[seed] Contents of ${WORKDIR}:"
-    ls -la "${WORKDIR}" || true
-    echo "[seed] Contents of ${APPSEED}:"
-    ls -la "${APPSEED}" || true
     exit 1
   fi
   echo "[seed] done"
