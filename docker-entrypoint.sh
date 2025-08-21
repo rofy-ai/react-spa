@@ -1,26 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APPSEED="${APPSEED:-/opt/appseed}"   # Where the app is baked inside the image
-DATADIR="${WORKDIR:-/data}"          # Where the Fly volume is mounted (you set this via Machines env)
+APPSEED="${APPSEED:-/opt/appseed}"   # baked-in source (image)
+WORKDIR="${WORKDIR:-/data}"          # mounted volume
 
-mkdir -p "$DATADIR"
+echo "[entrypoint] WORKDIR=${WORKDIR} APPSEED=${APPSEED}"
 
-# Treat /data as empty if it contains nothing except possibly 'lost+found'
-is_effectively_empty() {
-  if ls -A "$DATADIR" 2>/dev/null | grep -v '^lost+found$' | read -r _; then
-    return 1  # not empty
-  else
-    return 0  # empty
-  fi
-}
+# (Optional but safe) wait until the volume mount is visible
+for i in {1..30}; do
+  if grep -qs " ${WORKDIR} " /proc/mounts; then break; fi
+  echo "[entrypoint] waiting for ${WORKDIR} mount…"
+  sleep 1
+done
 
-if is_effectively_empty; then
-  echo "[seed] $DATADIR empty → copying from $APPSEED …"
-  # Copy *contents* (including dotfiles). The trailing `/.` matters.
-  cp -a "$APPSEED"/. "$DATADIR"/
-  echo "[seed] done."
+mkdir -p "$WORKDIR"
+
+if [ ! -f "${WORKDIR}/package.json" ]; then
+  echo "[seed] package.json not found in ${WORKDIR} → seeding from ${APPSEED}"
+  # copy without overwriting anything that might already be there
+  # (first boot: effectively a full copy; later: still safe)
+  cp -an "${APPSEED}/." "${WORKDIR}/"
+  echo "[seed] done"
+else
+  echo "[seed] package.json exists in ${WORKDIR} → skipping seed"
 fi
 
-cd "$DATADIR"
+echo "[entrypoint] exec: $*"
 exec "$@"
