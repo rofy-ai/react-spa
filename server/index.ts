@@ -97,28 +97,28 @@ function stopUserApiServer() {
 
 
 function startViteDevServer() {
-  const vite = spawn("npx", ["vite"], {
+  const devServer = spawn("npm", ["run", "dev"], {
     cwd: userAppDir,
-    stdio: ['ignore', 'pipe', 'pipe']  , // inherit for main process, pipe for logging
-    env: { ...process.env, FORCE_COLOR: "1" },
+    stdio: ['ignore', 'pipe', 'pipe'], // inherit for main process, pipe for logging
+    env: { ...process.env, FORCE_COLOR: "1", PORT: "5173" },
   });
 
-  vite.on("exit", (code, signal) => {
-    log(`vite exited with code ${code}, signal ${signal}`);
+  devServer.on("exit", (code, signal) => {
+    log(`dev server exited with code ${code}, signal ${signal}`);
   });
 
-  vite.on("error", (err: any) => {
-    log("vite process error:", err);
+  devServer.on("error", (err: any) => {
+    log("dev server process error:", err);
   });
 
-  vite.stderr.on('data',  buf => {
-    const block = (buf.toString().match(/\[vite\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
+  devServer.stderr.on('data', buf => {
+    const block = buf.toString();
     console.log("INSIDE HERE", block);
     if (!block.trim()) return;
     logErrors(block.trim());
   }); 
 
-  viteProcess = vite;
+  viteProcess = devServer;
 }
 
 function stopViteDevServer() {

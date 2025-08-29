@@ -38,6 +38,29 @@ export function createProjectZip(options: ZipOptions = {}): Promise<string> {
     const outputZipPath = path.resolve(outputDir, `${projectName}.zip`);
     const outputFileName = path.basename(outputZipPath);
 
+    console.log(`📦 Creating zip of ${folderToZip} at ${outputZipPath}`);
+
+    // --- Backup and modify package.json ---
+    const packageJsonPath = path.join(folderToZip, 'package.json');
+    const backupPath = path.join(folderToZip, 'package.json.bak');
+    let originalContent: string | null = null;
+    let modifiedContent: string | null = null;
+    try {
+      if (fs.existsSync(packageJsonPath)) {
+        originalContent = fs.readFileSync(packageJsonPath, 'utf-8');
+        fs.writeFileSync(backupPath, originalContent, 'utf-8');
+        // Remove the dev-server line from scripts
+        const pkg = JSON.parse(originalContent);
+        if (pkg.scripts && pkg.scripts["dev-server"]) {
+          delete pkg.scripts["dev-server"];
+        }
+        modifiedContent = JSON.stringify(pkg, null, 2);
+        fs.writeFileSync(packageJsonPath, modifiedContent, 'utf-8');
+      }
+    } catch (err) {
+      return reject(`Error preparing package.json: ${err}`);
+    }
+
     // Manual exclusions
     const manualExclude = [
       'server/index.ts',
@@ -48,6 +71,7 @@ export function createProjectZip(options: ZipOptions = {}): Promise<string> {
       'fly.toml',
       'Dockerfile',
       'package-lock.json',
+      'package.json.bak',
       '.dockerignore',
       'dist',
       'public/downloads',
@@ -68,6 +92,15 @@ export function createProjectZip(options: ZipOptions = {}): Promise<string> {
     const archive = archiver('zip', { zlib: { level: 9 } });
 
     output.on('close', () => {
+      // Restore original package.json after zipping
+      try {
+        if (originalContent) {
+          fs.writeFileSync(packageJsonPath, originalContent, 'utf-8');
+          fs.unlinkSync(backupPath);
+        }
+      } catch (err) {
+        console.warn(`Warning restoring package.json: ${err}`);
+      }
       console.log(`✅ Zip created: ${outputZipPath} (${archive.pointer()} bytes)`);
       resolve(outputZipPath);
     });
