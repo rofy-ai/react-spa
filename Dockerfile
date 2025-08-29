@@ -9,7 +9,7 @@ WORKDIR /opt/appseed
 # Layer-friendly install: first lockfiles, then the rest
 COPY package*.json ./
 # For a dev server you likely need dev deps; drop --omit=dev if you use them
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Now add the app source (src, public, etc.)
 COPY . .
