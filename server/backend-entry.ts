@@ -1,5 +1,5 @@
 import express from "express";
-import { registerBackendRoutes } from "./backend-routes";
+import { registerBackendRoutes } from "./backend-routes.js";
 
 const app = express();
 app.use(express.json());

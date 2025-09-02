@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { promises as fs } from "fs";
 import path from "path";
-import { createProjectZip } from "./zip";
+import { createProjectZip } from "./zip.js";
 import { fileURLToPath } from "url";
 
 interface FileUpdatePayload {

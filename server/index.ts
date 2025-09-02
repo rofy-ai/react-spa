@@ -1,6 +1,6 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { serveStatic, log } from "./vite";
+import express, { type Request, type Response, type NextFunction } from "express";
+import { registerRoutes } from "./routes.js";
+import { serveStatic, log } from "./vite.js";
 import { spawn, ChildProcess, fork } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -67,7 +67,10 @@ function logErrors(message: string) {
 // 🧠 Start user API server in separate process (isolated)
 function startUserApiServer() {
   try {
-    const scriptPath = path.join(__dirname, "backend-entry.js"); // compiled .js
+   const scriptPath =
+    process.env.NODE_ENV === "production"
+      ? path.join(__dirname, "backend-entry.js")       // dist/server/backend-entry.js
+      : path.join(__dirname, "../server/backend-entry.ts"); 
     const child = fork(scriptPath, [], {
       stdio: ['ignore', 'ignore', 'pipe', 'ipc'], // add 'ipc' here for fork
       env: { ...process.env, FORCE_COLOR: "1" },

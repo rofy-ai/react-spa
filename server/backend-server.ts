@@ -1,6 +1,6 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerBackendRoutes } from "./backend-routes";
-import { serveStatic, log } from "./vite";
+import express, { type Request, type Response, type NextFunction } from "express";
+import { registerBackendRoutes } from "./backend-routes.js";
+import { serveStatic, log } from "./vite.js";
 import { spawn, ChildProcess } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
