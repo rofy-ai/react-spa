@@ -7,6 +7,8 @@ import { fileURLToPath } from "url";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
+import fs from "fs";
+import 'dotenv/config';
 
 const allowedRoutes = [
   '/api/rofyDownloadFiles',
@@ -23,7 +25,10 @@ app.options("*", cors());
 
 // 🔁 Only handle /api/rofyUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
-  if (allowedRoutes.includes(req.originalUrl) || req.originalUrl.startsWith("/api/downloads/")) {
+  if (
+    allowedRoutes.includes(req.originalUrl) ||
+    req.originalUrl.startsWith("/api/downloads/")
+  ) {
     return next();
   }
 
@@ -67,10 +72,10 @@ function logErrors(message: string) {
 // 🧠 Start user API server in separate process (isolated)
 function startUserApiServer() {
   try {
-   const scriptPath =
-    process.env.NODE_ENV === "production"
-      ? path.join(__dirname, "backend-entry.js")       // dist/server/backend-entry.js
-      : path.join(__dirname, "../server/backend-entry.ts"); 
+    const scriptPath =
+      process.env.NODE_ENV === "production"
+        ? path.join(__dirname, "backend-entry.js") // dist/server/backend-entry.js
+        : path.join(__dirname, "../server/backend-entry.ts");
     const child = fork(scriptPath, [], {
       stdio: ['ignore', 'ignore', 'pipe', 'ipc'], // add 'ipc' here for fork
       env: { ...process.env, FORCE_COLOR: "1" },
@@ -78,7 +83,6 @@ function startUserApiServer() {
     userApiProcess = child;
 
     child.stderr?.on('data', (buf) => {
-      // const block = (buf.toString().match(/\[user-api\]([\s\S]*?)^\s*at/m) || [])[1] ?? '';
       const block = buf.toString();
       console.log("INSIDE HERE", block);
       if (!block.trim()) return;
@@ -97,7 +101,6 @@ function stopUserApiServer() {
     userApiProcess = null;
   }
 }
-
 
 function startViteDevServer() {
   const devServer = spawn("npm", ["run", "dev"], {
@@ -119,7 +122,7 @@ function startViteDevServer() {
     console.log("INSIDE HERE", block);
     if (!block.trim()) return;
     logErrors(block.trim());
-  }); 
+  });
 
   viteProcess = devServer;
 }
@@ -153,7 +156,7 @@ const isUserApiAlive = async (): Promise<boolean> => {
 // 🛡 Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const p = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
@@ -164,8 +167,8 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+    if (p.startsWith("/api")) {
+      let logLine = `${req.method} ${p} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -179,36 +182,105 @@ app.use((req, res, next) => {
   next();
 });
 
+if (app.get("env") === "development") {
+  /*  ----------------------------
+    Logger script (served no-store)
+  ----------------------------- */
+  app.get("/log-viewer.js", (req, res) => {
+    const logViewerPath = path.join(__dirname, "../log-viewer.js");
+    res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    fs.readFile(logViewerPath, "utf8", (err, content) => {
+      if (err) {
+        console.error('Error serving log-viewer.js:', err);
+        res.status(404).send("// log-viewer.js not found");
+        return;
+      }
+      res.send(content);
+    });
+  });
+}
 
-// 🔁 Existing Vite dev server proxy (untouched)
+/* ----------------------------
+   HTML injection helpers
+----------------------------- */
+function isNavigationRequest(req: import("http").IncomingMessage) {
+  const h = req.headers;
+  const accept = String(h["accept"] || "");
+  const dest = String(h["sec-fetch-dest"] || "");
+  const mode = String(h["sec-fetch-mode"] || "");
+  const site = String(h["sec-fetch-site"] || "");
+  return (
+    req.method === "GET" &&
+    accept.includes("text/html") &&
+    dest === "document" &&
+    mode === "navigate" &&
+    (site === "none" || site === "same-origin" || site === "cross-site")
+  );
+}
+
+function injectHeadTag(html: string) {
+  if (html.includes('data-rofy="console-capture"')) return html;
+  const tag = `<script type="module" src="/log-viewer.js" data-rofy="console-capture" defer></script>`;
+  if (html.includes("</head>")) return html.replace("</head>", `${tag}</head>`);
+  if (html.includes("</body>")) return html.replace("</body>", `${tag}</body>`);
+  return `${html}\n${tag}`;
+}
+
+/* ---------------------------------------
+   Dev: Proxy app shell & inject on navs
+---------------------------------------- */
 if (app.get("env") === "development") {
   console.log("Development mode detected, setting up Vite middleware");
+
   app.use(
     "/",
     createProxyMiddleware({
       target: "http://localhost:5173",
       changeOrigin: true,
       ws: true,
-      pathFilter: (path, req) => {
-        return !/^\/api(\/|$)/.test(path);
+      selfHandleResponse: true,
+      on: {
+        proxyReq: (proxyReq, req, _res) => {
+          // Force identity encoding ONLY for navigations so we can inject safely
+          if (isNavigationRequest(req)) {
+            proxyReq.setHeader("accept-encoding", "identity");
+            console.log("[injector] Navigation detected → will inject logger");
+          }
+        },
+        proxyRes: (proxyRes, req, res) => {
+        // Only rewrite top-level navigations; stream everything else untouched
+        if (!isNavigationRequest(req)) {
+          res.writeHead(proxyRes.statusCode || 200, proxyRes.headers as any);
+          proxyRes.pipe(res);
+          return;
+        }
+
+        const chunks: Buffer[] = [];
+        proxyRes.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
+        proxyRes.on("end", () => {
+          let body = Buffer.concat(chunks).toString("utf8");
+          body = injectHeadTag(body);
+
+          // Fix headers for the modified payload
+          const headers = { ...(proxyRes.headers as any) };
+          delete headers["content-length"];
+          headers["content-type"] = "text/html; charset=utf-8";
+          headers["cache-control"] = "no-store";
+
+          res.writeHead(proxyRes.statusCode || 200, headers);
+          res.end(body, "utf8");
+        });
       },
+      },
+      // keep APIs excluded at the top-level middleware; no filter needed here
     })
   );
 }
 
-// 🔁 Vite restart endpoint
-app.post("/api/restart-vite", (req, res) => {
-  restartViteDevServer();
-  res.json({ status: "vite restarted" });
-});
-
-app.post("/api/restart-backend", (req, res) => {
-  console.log("Restarting user API server...");
-  stopUserApiServer();
-  startUserApiServer();
-  res.json({ status: "user API restarted" });
-});
-
+/* ---------------------------------------
+   Static assets / downloads
+---------------------------------------- */
 app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloads')));
 
 (async () => {
@@ -237,3 +309,16 @@ app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloa
     log(`Main server listening on port ${port}`);
   });
 })();
+
+// 🔁 Vite restart endpoint
+app.post("/api/restart-vite", (req, res) => {
+  restartViteDevServer();
+  res.json({ status: "vite restarted" });
+});
+
+app.post("/api/restart-backend", (req, res) => {
+  console.log("Restarting user API server...");
+  stopUserApiServer();
+  startUserApiServer();
+  res.json({ status: "user API restarted" });
+});
