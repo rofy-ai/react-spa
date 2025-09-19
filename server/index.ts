@@ -182,25 +182,6 @@ app.use((req, res, next) => {
   next();
 });
 
-if (app.get("env") === "development") {
-  /*  ----------------------------
-    Logger script (served no-store)
-  ----------------------------- */
-  app.get("/log-viewer.js", (req, res) => {
-    const logViewerPath = path.join(__dirname, "../log-viewer.js");
-    res.setHeader("Content-Type", "application/javascript; charset=utf-8");
-    res.setHeader("Cache-Control", "no-store");
-    fs.readFile(logViewerPath, "utf8", (err, content) => {
-      if (err) {
-        console.error('Error serving log-viewer.js:', err);
-        res.status(404).send("// log-viewer.js not found");
-        return;
-      }
-      res.send(content);
-    });
-  });
-}
-
 /* ----------------------------
    HTML injection helpers
 ----------------------------- */
@@ -221,7 +202,7 @@ function isNavigationRequest(req: import("http").IncomingMessage) {
 
 function injectHeadTag(html: string) {
   if (html.includes('data-rofy="console-capture"')) return html;
-  const tag = `<script type="module" src="/log-viewer.js" data-rofy="console-capture" defer></script>`;
+  const tag = `<script type="module" src="https://cdn.shopify.com/s/files/1/0823/3962/7304/files/log-viewer.js?v=1758289905" data-rofy="console-capture" defer></script>`;
   if (html.includes("</head>")) return html.replace("</head>", `${tag}</head>`);
   if (html.includes("</body>")) return html.replace("</body>", `${tag}</body>`);
   return `${html}\n${tag}`;
