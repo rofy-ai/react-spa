@@ -7,7 +7,6 @@ import { fileURLToPath } from "url";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
-import fs from "fs";
 import 'dotenv/config';
 
 const allowedRoutes = [
@@ -23,8 +22,13 @@ const app = express();
 app.use(cors());
 app.options("*", cors());
 
+let previewHost: string | null = null;
+
 // 🔁 Only handle /api/rofyUpdateFiles locally; proxy all other /api/* to 5002
 app.use(async (req, res, next) => {
+  if (!previewHost) {
+    previewHost = req.headers.host || '';
+  }
   if (
     allowedRoutes.includes(req.originalUrl) ||
     req.originalUrl.startsWith("/api/downloads/")
@@ -58,11 +62,48 @@ const userAppDir = path.resolve(__dirname, "../client");
 
 let userApiProcess: ChildProcess | null = null;
 
+function shrinkError(rawError:string|Error): string {
+  const text = typeof rawError === "string" ? rawError : rawError.stack || String(rawError);
+
+  const lines = text.split("\n");
+
+  // 1. Keep the first line (always has error message)
+  const firstLine = lines[0];
+
+  // 2. Grab any inline codeframe block (lines that look like " 37 | foo")
+  const codeframe = lines.filter(l => /^\s*\d+\s*\|/.test(l) || /^\s*>/.test(l)).join("\n");
+
+  // 3. Grab framework/plugin hint lines (vite, plugin, module, caused by)
+  const hints = lines.filter(l =>
+    /(Module|Caused by|File:|Request URL:)/i.test(l)
+  ).join("\n");
+
+  // 4. Compose output without stack trace "at ..."
+  return [firstLine, codeframe].filter(Boolean).join("\n\n");
+}
+
+function stripAnsi(str: string): string {
+  return str.replace(
+    // regex to match ANSI escape codes
+    /\u001b\[[0-9;]*m/g,
+    ''
+  );
+}
+
+function extractChatId(): string | null {
+  if (!previewHost) return null;
+  const m = previewHost.toLowerCase().match(/^preview-([^.]+)\./);
+  return m ? m[1] : null;
+}
+
 function logErrors(message: string) {
-  console.log(`[${new Date().toISOString()}] ${message}`);
-  fetch('http://localhost:3000/api/logs', {
+  const shrunk = shrinkError(message);
+  const stripAnsiString = stripAnsi(shrunk);
+  const chatId = extractChatId();
+  
+  fetch('https://api.rezzo.ai/reviewer/review-errors', {
     method: 'POST',
-    body: JSON.stringify({ ts: Date.now(), kind: 'error', data: message }),
+    body: JSON.stringify({ chatId, errorLogs: [stripAnsiString] }),
     headers: { 'Content-Type': 'application/json' }
   }).catch(err => {
     console.error("Failed to send log:", err);
@@ -208,6 +249,54 @@ function injectHeadTag(html: string) {
   return `${html}\n${tag}`;
 }
 
+
+/* ---------------------------------------
+   Static assets / downloads
+---------------------------------------- */
+app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloads')));
+
+// Register all routes and middleware before starting the server
+(async () => {
+  await registerRoutes(app);
+  console.log("Routes registered");
+
+  // Error handler should be after all routes
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+    throw err;
+  });
+
+  if (app.get("env") === "development") {
+    startViteDevServer();
+  } else {
+    serveStatic(app);
+  }
+
+  // 🧠 Start the user API process
+  startUserApiServer();
+
+  const port = 5001;
+  app.listen({ port, host: "0.0.0.0" }, () => {
+    log(`Main server listening on port ${port}`);
+  });
+})();
+
+// 🔁 Vite restart endpoint
+app.post("/api/restart-vite", (req, res) => {
+  restartViteDevServer();
+  res.json({ status: "vite restarted" });
+});
+
+app.post("/api/restart-backend", (req, res) => {
+  console.log("Restarting user API server...");
+  stopUserApiServer();
+  startUserApiServer();
+  res.json({ status: "user API restarted" });
+});
+
+
 /* ---------------------------------------
    Dev: Proxy app shell & inject on navs
 ---------------------------------------- */
@@ -258,48 +347,3 @@ if (app.get("env") === "development") {
     })
   );
 }
-
-/* ---------------------------------------
-   Static assets / downloads
----------------------------------------- */
-app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloads')));
-
-(async () => {
-  const server = await registerRoutes(app);
-
-  console.log('Serving static from:', path.join(__dirname, '../public/downloads'));
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  if (app.get("env") === "development") {
-    startViteDevServer();
-  } else {
-    serveStatic(app);
-  }
-
-  // 🧠 Start the user API process
-  startUserApiServer();
-
-  const port = 5001;
-  server.listen({ port, host: "0.0.0.0" }, () => {
-    log(`Main server listening on port ${port}`);
-  });
-})();
-
-// 🔁 Vite restart endpoint
-app.post("/api/restart-vite", (req, res) => {
-  restartViteDevServer();
-  res.json({ status: "vite restarted" });
-});
-
-app.post("/api/restart-backend", (req, res) => {
-  console.log("Restarting user API server...");
-  stopUserApiServer();
-  startUserApiServer();
-  res.json({ status: "user API restarted" });
-});

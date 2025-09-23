@@ -10,7 +10,7 @@ interface FileUpdatePayload {
   content: string;
 }
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
   app.post("/api/rofyUpdateFiles", async (req, res) => {
     const files: FileUpdatePayload[] = req.body;
 
@@ -116,6 +116,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 });
 
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // const httpServer = createServer(app);
+  // return httpServer;
 }
