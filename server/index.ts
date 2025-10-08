@@ -235,7 +235,7 @@ function isNavigationRequest(req: import("http").IncomingMessage) {
   return (
     req.method === "GET" &&
     accept.includes("text/html") &&
-    dest === "document" &&
+    dest === "iframe" &&
     mode === "navigate" &&
     (site === "none" || site === "same-origin" || site === "cross-site")
   );
