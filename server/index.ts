@@ -237,7 +237,7 @@ function isNavigationRequest(req: import("http").IncomingMessage) {
     accept.includes("text/html") &&
     dest === "iframe" &&
     mode === "navigate" &&
-    (site === "none" || site === "same-origin" || site === "cross-site")
+    (site === "none" || site === "same-origin" || site === "cross-site" || site === "same-site")
   );
 }
 
@@ -312,38 +312,41 @@ if (app.get("env") === "development") {
       selfHandleResponse: true,
       on: {
         proxyReq: (proxyReq, req, _res) => {
-          // Force identity encoding ONLY for navigations so we can inject safely
-          if (isNavigationRequest(req)) {
+          // Force identity encoding for ALL HTML requests
+          if (req.headers.accept?.includes('text/html')) {
             proxyReq.setHeader("accept-encoding", "identity");
-            console.log("[injector] Navigation detected → will inject logger");
           }
         },
         proxyRes: (proxyRes, req, res) => {
-        // Only rewrite top-level navigations; stream everything else untouched
-        if (!isNavigationRequest(req)) {
-          res.writeHead(proxyRes.statusCode || 200, proxyRes.headers as any);
-          proxyRes.pipe(res);
-          return;
-        }
+          // Check if this is an HTML response (not just navigation)
+          const isHtml = proxyRes.headers['content-type']?.includes('text/html');
+          const isNav = isNavigationRequest(req);
 
-        const chunks: Buffer[] = [];
-        proxyRes.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
-        proxyRes.on("end", () => {
-          let body = Buffer.concat(chunks).toString("utf8");
-          body = injectHeadTag(body);
+          // Only inject into HTML responses for navigation requests
+          if (!isHtml || !isNav) {
+            res.writeHead(proxyRes.statusCode || 200, proxyRes.headers as any);
+            proxyRes.pipe(res);
+            return;
+          }
 
-          // Fix headers for the modified payload
-          const headers = { ...(proxyRes.headers as any) };
-          delete headers["content-length"];
-          headers["content-type"] = "text/html; charset=utf-8";
-          headers["cache-control"] = "no-store";
+          const chunks: Buffer[] = [];
+          proxyRes.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
+          proxyRes.on("end", () => {
+            let body = Buffer.concat(chunks).toString("utf8");
+            body = injectHeadTag(body);            
 
-          res.writeHead(proxyRes.statusCode || 200, headers);
-          res.end(body, "utf8");
-        });
+            // Fix headers for the modified payload
+            const headers = { ...(proxyRes.headers as any) };
+            delete headers["content-length"];
+            delete headers["content-encoding"];
+            headers["content-type"] = "text/html; charset=utf-8";
+            headers["cache-control"] = "no-store, no-cache, must-revalidate";
+
+            res.writeHead(proxyRes.statusCode || 200, headers);
+            res.end(body, "utf8");
+          });
+        },
       },
-      },
-      // keep APIs excluded at the top-level middleware; no filter needed here
     })
   );
 }
