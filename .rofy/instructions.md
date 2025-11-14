@@ -133,6 +133,18 @@ react-spa/
 - `server/backend-server.ts`
 - `server/vite.ts`
 - `node_modules/`
+- `server/index.ts`
+- `server/routes.ts`,
+- `server/zip.ts`,
+- `server/vite.ts`,
+- `Dockerfile`,
+- `.dockerignore`,
+- `dist`,
+- `public/rofy_downloads`,
+- `client/eslint.config.js`,
+- `client/tsconfig.app.json`,
+- `client/tsconfig.json`,
+- `client/tsconfig.node.json`
 
 ## Key Features
 
