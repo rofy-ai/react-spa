@@ -21,10 +21,69 @@ This is a full-stack React Single Page Application with a Node.js/Express backen
 
 - **Node.js** with **Express**
 - **TypeScript**
-- **Drizzle ORM** with Neon (PostgreSQL)
-- **Express Sessions** with authentication
-- **Passport.js** for auth strategies
+- **Mongo DB** with Mongoose
 - **WebSocket** support
+
+### API pattern (exact patterns to follow)
+- Base API: `/api` exposed by backend.
+- APIs in `server/apis/` are auto-loaded.
+- All api files are generated in the `server/apis/{api-name}.ts` file.
+
+### Example API pattern
+  **Create API route** (server/apis/tasks.ts):
+  ```typescript
+  import { Router } from 'express';
+  import { type Request, type Response } from 'express';
+  import { Task } from '../db/models/task';
+  const router = Router();
+  // GET /api/tasks
+  router.get('/', async (req: Request, res: Response) => {
+    try {
+      const tasks = await Task.find();
+      res.json({ tasks });
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      res.status(500).json({ error: 'Failed to fetch tasks' });
+    }
+  });
+  // POST /api/tasks
+  router.post('/', async (req: Request, res: Response) => {
+    try {
+      const { title, userId } = req.body;
+      const task = await Task.create({ title, userId, completed: false });
+      res.status(201).json({ task });
+    } catch (error) {
+      console.error('Error creating task:', error);
+      res.status(500).json({ error: 'Failed to create task' });
+    }
+  });
+  // PUT /api/tasks/:id
+  router.put('/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const task = await Task.findByIdAndUpdate(id, req.body, { new: true });
+      if (!task) return res.status(404).json({ error: 'Task not found' });
+      res.json({ task });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      res.status(500).json({ error: 'Failed to update task' });
+    }
+  });
+  // DELETE /api/tasks/:id
+  router.delete('/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const task = await Task.findByIdAndDelete(id);
+      if (!task) return res.status(404).json({ error: 'Task not found' });
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      res.status(500).json({ error: 'Failed to delete task' });
+    }
+  });
+  export default router;
+  ```
+
 
 ## Project Structure
 
@@ -50,26 +109,12 @@ react-spa/
 └── package.json             # Root package.json with workspaces
 ```
 
-## Development Workflow
-
-- Use `npm run dev` to start both client and server in development
-- Client runs on Vite dev server with HMR
-- Server uses nodemon with tsx for TypeScript execution
-- Database changes managed through Drizzle migrations
-
 ## Package Management
 
 - **Monorepo Structure**: All dependencies are managed in the root `package.json`
 - **Workspace Configuration**: The client folder is configured as a workspace
 - **Shared Dependencies**: Both client and server share the same `node_modules` and dependency versions
 - **Client Package.json**: The `client/package.json` only contains scripts - all dependencies are inherited from the root
-
-## Port Configuration
-
-- **Main Server**: Port `5001` - Express server that handles API routing and static file serving
-- **Frontend Dev Server**: Port `5173` - Vite development server for the React app
-- **Backend API Server**: Port `5002` - Separate Express process for user-defined API routes
-- **Development Setup**: The main server (5001) proxies frontend requests to Vite (5173) and API requests to the backend server (5002)
 
 ## Code Conventions
 
@@ -79,6 +124,7 @@ react-spa/
 - Implement proper error handling and loading states
 - Use TanStack Query for server state management
 - Follow the existing folder structure and naming conventions
+- If a file is getting larger than 300 lines of code, break it down into smaller chunks across files.
 
 ## FORBIDDEN FILES (never modify):
 
@@ -86,15 +132,13 @@ react-spa/
 - `server/backend-routes.ts`
 - `server/backend-server.ts`
 - `server/vite.ts`
-- `package-lock.json`
 - `node_modules/`
 
 ## Key Features
 
 - Full-stack TypeScript
 - Modern React patterns with hooks
-- Database integration with Drizzle ORM
-- Authentication system ready
+- Database integration with Mongoose and MongoDB
 - Component library with shadcn/ui
 - Responsive design with Tailwind CSS
 - WebSocket support for real-time features
