@@ -1,5 +1,7 @@
 FROM node:20
 
+ENV NODE_ENV=development
+
 # --- Bake the seed into the image ---
 WORKDIR /app
 
