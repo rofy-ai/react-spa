@@ -13,6 +13,8 @@ const allowedRoutes = [
   '/api/rofyDownloadFiles',
   '/api/rofyUpdateFiles',
   '/api/restart-backend',
+  '/api/restart-vite',
+  '/api/restart-all',
   '/api/rofyLogs'
 ];
 
@@ -330,17 +332,86 @@ app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloa
   });
 })();
 
-// 🔁 Vite restart endpoint
-app.post("/api/restart-vite", (req, res) => {
-  restartViteDevServer();
-  res.json({ status: "vite restarted" });
+// 🔁 Restart both frontend and backend servers
+app.post("/api/restart-all", async (req, res) => {
+  try {
+    console.log("🔄 Restarting all servers...");
+    
+    // Stop both servers first
+    stopUserApiServer();
+    if (app.get("env") === "development") {
+      stopViteDevServer();
+    }
+    
+    // Wait for clean shutdown
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Start both servers
+    if (app.get("env") === "development") {
+      startViteDevServer();
+    }
+    startUserApiServer();
+    
+    // Wait for backend to be ready
+    let backendReady = false;
+    for (let i = 0; i < 10; i++) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      backendReady = await isUserApiAlive();
+      if (backendReady) break;
+    }
+    
+    console.log("✅ All servers restarted successfully");
+    
+    res.json({ 
+      status: "success",
+      message: "Both frontend (5173) and backend (5002) servers restarted",
+      timestamp: new Date().toISOString(),
+      services: {
+        vite: app.get("env") === "development" ? "restarted" : "not in dev mode",
+        backend: backendReady ? "ready" : "starting (may take a few seconds)"
+      }
+    });
+  } catch (err: any) {
+    console.error("❌ Failed to restart servers:", err);
+    res.status(500).json({ 
+      status: "error",
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
-app.post("/api/restart-backend", (req, res) => {
-  console.log("Restarting user API server...");
+// 🔁 Vite restart endpoint
+app.post("/api/restart-vite", (req, res) => {
+  if (app.get("env") !== "development") {
+    return res.status(400).json({ 
+      status: "error",
+      message: "Vite restart only available in development mode" 
+    });
+  }
+  
+  console.log("🔄 Restarting Vite dev server...");
+  restartViteDevServer();
+  res.json({ 
+    status: "success",
+    message: "Vite dev server (5173) restarted",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post("/api/restart-backend", async (req, res) => {
+  console.log("🔄 Restarting backend API server...");
   stopUserApiServer();
+  
+  // Wait for clean shutdown
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   startUserApiServer();
-  res.json({ status: "user API restarted" });
+  res.json({ 
+    status: "success",
+    message: "Backend API server (5002) restarted",
+    timestamp: new Date().toISOString()
+  });
 });
 
 
