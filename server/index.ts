@@ -8,6 +8,8 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import http from "http";
 import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+import fs from 'fs';
 
 const allowedRoutes = [
   '/api/rofyDownloadFiles',
@@ -132,6 +134,33 @@ function logErrors(message: string) {
   }).catch(err => {
     console.error("Failed to send log:", err);
   });
+}
+
+// 🔄 Function to reload environment variables from .env file
+function reloadEnvVariables() {
+  try {
+    const envPath = path.join(__dirname, '../.env');
+    
+    // Check if .env file exists
+    if (fs.existsSync(envPath)) {
+      // Read and parse .env file with override
+      const result = dotenvConfig({ path: envPath, override: true });
+      
+      if (result.error) {
+        console.error('❌ Error reloading .env file:', result.error);
+        return false;
+      }
+      
+      console.log('✅ Environment variables reloaded from .env');
+      return true;
+    } else {
+      console.warn('⚠️ No .env file found at', envPath);
+      return false;
+    }
+  } catch (err) {
+    console.error('❌ Failed to reload environment variables:', err);
+    return false;
+  }
 }
 
 // 🧠 Start user API server in separate process (isolated)
@@ -335,24 +364,27 @@ app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloa
 // 🔁 Restart both frontend and backend servers
 app.post("/api/restart-all", async (req, res) => {
   try {
-    console.log("🔄 Restarting all servers...");
+    console.log("🔄 Restarting all servers with fresh environment variables...");
     
-    // Stop both servers first
+    // 1️⃣ Reload environment variables FIRST
+    const envReloaded = reloadEnvVariables();
+    
+    // 2️⃣ Stop both servers
     stopUserApiServer();
     if (app.get("env") === "development") {
       stopViteDevServer();
     }
     
-    // Wait for clean shutdown
+    // 3️⃣ Wait for clean shutdown
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Start both servers
+    // 4️⃣ Start both servers (they will inherit the new env vars)
     if (app.get("env") === "development") {
       startViteDevServer();
     }
     startUserApiServer();
     
-    // Wait for backend to be ready
+    // 5️⃣ Wait for backend to be ready
     let backendReady = false;
     for (let i = 0; i < 10; i++) {
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -360,7 +392,7 @@ app.post("/api/restart-all", async (req, res) => {
       if (backendReady) break;
     }
     
-    console.log("✅ All servers restarted successfully");
+    console.log("✅ All servers restarted successfully with updated environment");
     
     res.json({ 
       status: "success",
@@ -369,7 +401,8 @@ app.post("/api/restart-all", async (req, res) => {
       services: {
         vite: app.get("env") === "development" ? "restarted" : "not in dev mode",
         backend: backendReady ? "ready" : "starting (may take a few seconds)"
-      }
+      },
+      environment: envReloaded ? "reloaded from .env file" : "using existing environment"
     });
   } catch (err: any) {
     console.error("❌ Failed to restart servers:", err);
@@ -390,17 +423,25 @@ app.post("/api/restart-vite", (req, res) => {
     });
   }
   
-  console.log("🔄 Restarting Vite dev server...");
+  console.log("🔄 Restarting Vite dev server with fresh environment...");
+  
+  // Reload env before restarting Vite
+  reloadEnvVariables();
+  
   restartViteDevServer();
   res.json({ 
     status: "success",
-    message: "Vite dev server (5173) restarted",
+    message: "Vite dev server (5173) restarted with updated environment",
     timestamp: new Date().toISOString()
   });
 });
 
 app.post("/api/restart-backend", async (req, res) => {
-  console.log("🔄 Restarting backend API server...");
+  console.log("🔄 Restarting backend API server with fresh environment...");
+  
+  // Reload env before restarting backend
+  reloadEnvVariables();
+  
   stopUserApiServer();
   
   // Wait for clean shutdown
@@ -409,7 +450,7 @@ app.post("/api/restart-backend", async (req, res) => {
   startUserApiServer();
   res.json({ 
     status: "success",
-    message: "Backend API server (5002) restarted",
+    message: "Backend API server (5002) restarted with updated environment",
     timestamp: new Date().toISOString()
   });
 });
