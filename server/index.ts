@@ -39,13 +39,35 @@ app.use(async (req, res, next) => {
   if (req.originalUrl.startsWith("/api/")) {
     const alive = await isUserApiAlive();
     if (!alive) {
-      return res.status(502).json({ error: "User API server unavailable" });
+      return res.status(502).json({ 
+        error: "Backend API server is currently unavailable",
+        details: "The backend process may have crashed or failed to start. Check server logs for details.",
+        timestamp: new Date().toISOString()
+      });
     }
 
     console.log(`Proxying to 5002: ${req.method} ${req.originalUrl}`);
     return createProxyMiddleware({
       target: "http://localhost:5002",
       changeOrigin: true,
+      on: {
+        error: (err: any, req: any, res: any) => {
+          console.error('❌ Proxy error:', err.message);
+          const typedRes = res as express.Response;
+          typedRes.status(502).json({
+            error: "Failed to proxy request to backend",
+            details: err.message,
+            path: req.url,
+            timestamp: new Date().toISOString()
+          });
+        },
+        proxyRes: (proxyRes: any, req: any, res: any) => {
+          // Log error responses from backend
+          if (proxyRes.statusCode && proxyRes.statusCode >= 400) {
+            console.error(`❌ Backend returned ${proxyRes.statusCode} for ${req.method} ${req.url}`);
+          }
+        }
+      }
     })(req, res, next);
   }
 
@@ -123,11 +145,36 @@ function startUserApiServer() {
     });
     userApiProcess = child;
 
+    // Listen for IPC messages from child process
+    child.on('message', (msg: any) => {
+      if (msg.type === 'error') {
+        console.error('❌ Backend error:', msg.error);
+        if (msg.stack) {
+          console.error('Stack:', msg.stack);
+        }
+        logErrors(`${msg.error}\n${msg.stack || ''}`);
+      } else if (msg.type === 'ready') {
+        console.log('✅ User API server ready on port 5002');
+      }
+    });
+
     child.stderr?.on('data', (buf) => {
       const block = buf.toString();
-      console.log("INSIDE HERE", block);
+      console.error("❌ Backend stderr:", block);
       if (!block.trim()) return;
       logErrors(block.trim());
+    });
+
+    child.on('exit', (code, signal) => {
+      console.error(`❌ Backend process exited with code ${code}, signal ${signal}`);
+      userApiProcess = null;
+      // Auto-restart on unexpected exit
+      if (code !== 0 && code !== null) {
+        console.log('🔄 Auto-restarting backend in 2 seconds...');
+        setTimeout(() => {
+          startUserApiServer();
+        }, 2000);
+      }
     });
 
     console.log("✅ User API server process forked");
