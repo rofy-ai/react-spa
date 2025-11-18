@@ -22,68 +22,6 @@ This is a full-stack React Single Page Application with a Node.js/Express backen
 - **Node.js** with **Express**
 - **TypeScript**
 - **Mongo DB** with Mongoose
-- **WebSocket** support
-
-### API pattern (exact patterns to follow)
-- Base API: `/api` exposed by backend.
-- APIs in `server/apis/` are auto-loaded.
-- All api files are generated in the `server/apis/{api-name}.ts` file.
-
-### Example API pattern
-  **Create API route** (server/apis/tasks.ts):
-  ```typescript
-  import { Router } from 'express';
-  import { type Request, type Response } from 'express';
-  import { Task } from '../db/models/task';
-  const router = Router();
-  // GET /api/tasks
-  router.get('/', async (req: Request, res: Response) => {
-    try {
-      const tasks = await Task.find();
-      res.json({ tasks });
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      res.status(500).json({ error: 'Failed to fetch tasks' });
-    }
-  });
-  // POST /api/tasks
-  router.post('/', async (req: Request, res: Response) => {
-    try {
-      const { title, userId } = req.body;
-      const task = await Task.create({ title, userId, completed: false });
-      res.status(201).json({ task });
-    } catch (error) {
-      console.error('Error creating task:', error);
-      res.status(500).json({ error: 'Failed to create task' });
-    }
-  });
-  // PUT /api/tasks/:id
-  router.put('/:id', async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const task = await Task.findByIdAndUpdate(id, req.body, { new: true });
-      if (!task) return res.status(404).json({ error: 'Task not found' });
-      res.json({ task });
-    } catch (error) {
-      console.error('Error updating task:', error);
-      res.status(500).json({ error: 'Failed to update task' });
-    }
-  });
-  // DELETE /api/tasks/:id
-  router.delete('/:id', async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const task = await Task.findByIdAndDelete(id);
-      if (!task) return res.status(404).json({ error: 'Task not found' });
-      res.status(204).send();
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      res.status(500).json({ error: 'Failed to delete task' });
-    }
-  });
-  export default router;
-  ```
-
 
 ## Project Structure
 
@@ -99,13 +37,12 @@ react-spa/
 │   │   └── stores/          # State management (if applicable)
 │   └── package.json         # Client dependencies (empty - uses workspace)
 ├── server/                   # Backend Express app
-│   ├── apis/                # API route handlers (auto-loaded)
+│   ├── backend-routes.ts # Contains backend apis implementation
 │   ├── db/
 │   │   ├── models/          # Database models/schemas
 │   │   └── connection.ts    # Database connection setup
 │   ├── lib/                 # Server utilities
 │   ├── middleware/          # Express middleware
-│   └── index.ts             # Main server entry point
 └── package.json             # Root package.json with workspaces
 ```
 
@@ -129,7 +66,6 @@ react-spa/
 ## FORBIDDEN FILES (never modify):
 
 - `server/backend-entry.ts`
-- `server/backend-routes.ts`
 - `server/backend-server.ts`
 - `server/vite.ts`
 - `node_modules/`
