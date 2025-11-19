@@ -6,6 +6,7 @@
 - **React 19** with TypeScript (FIXED, NEVER MODIFY)
 - **Vite** for build tooling (FIXED, NEVER MODIFY)
 - **TypeScript** (FIXED, NEVER MODIFY)
+- **Tailwind** CSS framework (FIXED, NEVER MODIFY)
 
 ### Backend (Server)
 - **Node.js** with **Express** (FIXED, NEVER MODIFY)
