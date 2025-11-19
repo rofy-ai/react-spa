@@ -5,6 +5,7 @@
 ### Frontend (Client)
 - **React 19** with TypeScript (FIXED, NEVER MODIFY)
 - **Vite** for build tooling (FIXED, NEVER MODIFY)
+- **TypeScript** (FIXED, NEVER MODIFY)
 
 ### Backend (Server)
 - **Node.js** with **Express** (FIXED, NEVER MODIFY)
@@ -77,7 +78,6 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 4. Always send appropriate status codes
 5. Follow RESTful naming conventions (e.g., `/api/resource-name`)
 
-
 ## Code Conventions
 - Use TypeScript for all new files
 - Follow React functional component patterns with hooks
@@ -106,3 +106,8 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - `client/tsconfig.node.json`
 - `.rofy/rules.md`
 
+## Package Management (never modify)
+- **Monorepo Structure**: All dependencies are managed in the root `package.json`
+- **Workspace Configuration**: The client folder is configured as a workspace
+- **Shared Dependencies**: Both client and server share the same `node_modules` and dependency versions
+- **Client Package.json**: The `client/package.json` only contains scripts - all dependencies are inherited from the root
