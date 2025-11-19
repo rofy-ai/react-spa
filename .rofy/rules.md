@@ -1,4 +1,4 @@
-# Template Rules
+# Code Writing Rules
 
 ## Tech Stack
 
