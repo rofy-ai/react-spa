@@ -104,4 +104,5 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - `client/tsconfig.app.json`,
 - `client/tsconfig.json`,
 - `client/tsconfig.node.json`
+- `.rofy/rules.md`
 
