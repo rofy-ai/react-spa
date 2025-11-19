@@ -1,4 +1,4 @@
-# React SPA Template Instructions
+# Short, focused guidance to help an AI edit and navigate this repository
 
 ## Template Overview
 
