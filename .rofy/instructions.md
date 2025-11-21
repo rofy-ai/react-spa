@@ -1,4 +1,4 @@
-# React SPA Template Instructions
+**Short, focused guidance to help an AI edit and navigate this repository**
 
 ## Template Overview
 
@@ -26,12 +26,6 @@ react-spa/
 │   ├── middleware/          # Express middleware
 └── package.json             # Root package.json with workspaces
 ```
-
-## Package Management
-- **Monorepo Structure**: All dependencies are managed in the root `package.json`
-- **Workspace Configuration**: The client folder is configured as a workspace
-- **Shared Dependencies**: Both client and server share the same `node_modules` and dependency versions
-- **Client Package.json**: The `client/package.json` only contains scripts - all dependencies are inherited from the root
 
 ## Key Features
 - Full-stack TypeScript
