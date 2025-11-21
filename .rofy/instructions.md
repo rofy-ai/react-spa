@@ -16,6 +16,7 @@ react-spa/
 │   │   ├── lib/             # Utilities, API clients, configs
 │   │   └── stores/          # State management (if applicable)
 │   └── package.json         # Client dependencies (empty - uses workspace)
+│   └── tailwind.config.ts         # Tailwind config file
 ├── server/                   # Backend Express app
 │   ├── backend-routes.ts # Contains backend apis implementation
 │   ├── db/
