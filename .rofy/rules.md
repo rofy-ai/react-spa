@@ -8,6 +8,10 @@
 - **TypeScript** (FIXED, NEVER MODIFY)
 - **Tailwind** CSS framework (FIXED, NEVER MODIFY)
 
+## Database Rules
+- **ALWAYS use Mongoose for MongoDB operations (never native MongoDB driver)**
+- Use `_id` (not `id`) for document IDs, enable `timestamps: true`
+
 ### Backend (Server)
 - **Node.js** with **Express** (FIXED, NEVER MODIFY)
 - **TypeScript** (FIXED, NEVER MODIFY)
