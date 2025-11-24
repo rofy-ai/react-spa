@@ -140,9 +140,9 @@ import Button from './components/Button';
 **MINIMIZE FILE COUNT — Combine related code into single files**
 
 ### Limits
-- Simple feature: 1-3 files max
-- Medium feature: 4-6 files max
-- Complex feature: 7-10 files max
+- Simple feature: 1-2 files max
+- Medium feature: 3-4 files max
+- Complex feature: 4-6 files max
 
 ### DO Combine
 - Component + its types + its hooks = ONE file
