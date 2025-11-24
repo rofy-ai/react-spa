@@ -88,26 +88,6 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - Follow the existing folder structure and naming conventions
 - If a file is getting larger than 300 lines of code, break it down into smaller chunks across files.
 
-## Component Export Rules
-
-**ALWAYS use named exports, NEVER use default exports**
-
-✅ **Correct:**
-```typescript
-export function Button({ children, onClick }: ButtonProps) {
-  return {children};
-}
-import { Button } from './components/Button';
-```
-
-❌ **Wrong:**
-```typescript
-export default function Button({ children, onClick }: ButtonProps) {
-  return {children};
-}
-import Button from './components/Button';
-
-
 ## FORBIDDEN FILES (never modify):
 - `server/backend-entry.ts`
 - `server/backend-server.ts`
@@ -132,3 +112,23 @@ import Button from './components/Button';
 - **Workspace Configuration**: The client folder is configured as a workspace
 - **Shared Dependencies**: Both client and server share the same `node_modules` and dependency versions
 - **Client Package.json**: The `client/package.json` only contains scripts - all dependencies are inherited from the root
+
+## Component Export Rules
+
+**ALWAYS use named exports, NEVER use default exports**
+
+✅ **Correct:**
+```typescript
+export function Button({ children, onClick }: ButtonProps) {
+  return {children};
+}
+import { Button } from './components/Button';
+```
+
+❌ **Wrong:**
+```typescript
+export default function Button({ children, onClick }: ButtonProps) {
+  return {children};
+}
+import Button from './components/Button';
+```
