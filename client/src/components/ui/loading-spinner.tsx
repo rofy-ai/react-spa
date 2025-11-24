@@ -5,7 +5,7 @@ interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
 }
 
-export default function LoadingSpinner({ 
+function LoadingSpinner({ 
   className, 
   size = "md" 
 }: LoadingSpinnerProps) {
@@ -23,3 +23,5 @@ export default function LoadingSpinner({
     )} />
   );
 }
+
+export { LoadingSpinner };
