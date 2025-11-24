@@ -8,6 +8,10 @@
 - **TypeScript** (FIXED, NEVER MODIFY)
 - **Tailwind** CSS framework (FIXED, NEVER MODIFY)
 
+## Database Rules
+- **ALWAYS use Mongoose for MongoDB operations (never native MongoDB driver)**
+- Use `_id` (not `id`) for document IDs, enable `timestamps: true`
+
 ### Backend (Server)
 - **Node.js** with **Express** (FIXED, NEVER MODIFY)
 - **TypeScript** (FIXED, NEVER MODIFY)
@@ -112,3 +116,23 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - **Workspace Configuration**: The client folder is configured as a workspace
 - **Shared Dependencies**: Both client and server share the same `node_modules` and dependency versions
 - **Client Package.json**: The `client/package.json` only contains scripts - all dependencies are inherited from the root
+
+## Component Export Rules
+
+**ALWAYS use named exports, NEVER use default exports**
+
+✅ **Correct:**
+```typescript
+export function Button({ children, onClick }: ButtonProps) {
+  return {children};
+}
+import { Button } from './components/Button';
+```
+
+❌ **Wrong:**
+```typescript
+export default function Button({ children, onClick }: ButtonProps) {
+  return {children};
+}
+import Button from './components/Button';
+```
