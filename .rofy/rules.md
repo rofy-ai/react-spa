@@ -90,7 +90,6 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - Implement proper error handling and loading states
 - Use TanStack Query for server state management
 - Follow the existing folder structure and naming conventions
-- If a file is getting larger than 300 lines of code, break it down into smaller chunks across files.
 
 ## FORBIDDEN FILES (never modify):
 - `server/backend-entry.ts`
@@ -136,3 +135,23 @@ export default function Button({ children, onClick }: ButtonProps) {
 }
 import Button from './components/Button';
 ```
+## File Creation Rules
+
+**MINIMIZE FILE COUNT — Combine related code into single files**
+
+### Limits
+- Simple feature: 1-3 files max
+- Medium feature: 4-6 files max
+- Complex feature: 7-10 files max
+
+### DO Combine
+- Component + its types + its hooks = ONE file
+- Related API endpoints = ONE file (e.g., all user routes in `users.ts`)
+- Small utilities (<50 lines) = ONE `utils.ts` file
+
+### DON'T Create Separate Files For
+- Types/interfaces (keep in same file as component)
+- Single-use hooks (inline in component file)
+- Barrel exports (`index.ts` that just re-exports)
+- Empty placeholder files
+- Separate style files (use Tailwind inline)
