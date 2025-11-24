@@ -139,19 +139,6 @@ import Button from './components/Button';
 
 **MINIMIZE FILE COUNT — Combine related code into single files**
 
-### Limits
-- Simple feature: 1-2 files max
-- Medium feature: 3-4 files max
-- Complex feature: 4-6 files max
-
 ### DO Combine
 - Component + its types + its hooks = ONE file
-- Related API endpoints = ONE file (e.g., all user routes in `users.ts`)
-- Small utilities (<50 lines) = ONE `utils.ts` file
-
-### DON'T Create Separate Files For
-- Types/interfaces (keep in same file as component)
-- Single-use hooks (inline in component file)
-- Barrel exports (`index.ts` that just re-exports)
-- Empty placeholder files
-- Separate style files (use Tailwind inline)
+- All utilities = ONE file
