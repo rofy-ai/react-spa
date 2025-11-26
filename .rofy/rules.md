@@ -90,7 +90,6 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - Implement proper error handling and loading states
 - Use TanStack Query for server state management
 - Follow the existing folder structure and naming conventions
-- If a file is getting larger than 300 lines of code, break it down into smaller chunks across files.
 
 ## FORBIDDEN FILES (never modify):
 - `server/backend-entry.ts`
@@ -136,3 +135,10 @@ export default function Button({ children, onClick }: ButtonProps) {
 }
 import Button from './components/Button';
 ```
+## File Creation Rules
+
+**MINIMIZE FILE COUNT — Combine related code into single files**
+
+### DO Combine
+- Component + its types + its hooks = ONE file
+- All utilities = ONE file
