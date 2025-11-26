@@ -51,7 +51,24 @@
 - `server/models/**/*` - Database models
 - `.env` - Environment variables
 
+**CRITICAL: ALWAYS WRITE BACKEND APIS FOLLOWING THESE RULES**
+
+**⚠️ NEVER MODIFY THE `registerBackendRoutes` FUNCTION SIGNATURE OR STRUCTURE**
+- DO NOT change the function name, parameters, or return type
+- DO NOT modify the existing health check endpoint (`/__health`)
+- DO NOT remove or modify the `createServer(app)` return statement
+- DO NOT remove or modify the console.log statement
+
+**✅ ALWAYS ADD NEW API ROUTES INSIDE THE FUNCTION BODY**
+- Add new routes AFTER the existing endpoints
+- Add new routes BEFORE the `console.log` and `return` statements
+- Follow the same pattern as existing routes
+
 ---
+
+## Database Rules
+- **ALWAYS use Mongoose for MongoDB operations (never native MongoDB driver)**
+- Use `_id` (not `id`) for document IDs, enable `timestamps: true`
 
 ## 📁 PROJECT STRUCTURE
 
@@ -124,7 +141,6 @@ react-spa/
 - `@shared/*` → `shared/*`
 - `@assets/*` → `client/attached_assets/*`
 
-**Build Output**: `dist/public`  
 **Dev Server**: Port 5173 (proxied through port 5001)
 
 ### tailwind.config.ts
@@ -531,95 +547,6 @@ return isMobile ? <MobileNav /> : <DesktopNav />
 
 ---
 
-## 📚 UTILITY FUNCTIONS
-
-### cn() (`@/lib/utils`)
-**Purpose**: Merge Tailwind classes with clsx + tailwind-merge
-```typescript
-function cn(...inputs: ClassValue[]): string
-```
-**Usage**:
-```tsx
-<div className={cn("base-class", condition && "conditional-class", className)} />
-```
-
-### apiRequest() (`@/lib/queryClient`)
-**Purpose**: Make authenticated API requests
-```typescript
-async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown
-): Promise<Response>
-```
-**Usage**:
-```tsx
-const response = await apiRequest("POST", "/api/users", { name: "John" })
-const json = await response.json()
-```
-
-### getQueryFn() (`@/lib/queryClient`)
-**Purpose**: Create query function for TanStack Query
-```typescript
-const getQueryFn: <T>(options: {
-  on401: "returnNull" | "throw"
-}) => QueryFunction<T>
-```
-**Usage**: Used internally by `queryClient`, not typically called directly.
-
----
-
-## 🔌 TANSTACK QUERY SETUP
-
-### Query Client Configuration
-```typescript
-// Already configured in @/lib/queryClient
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false
-    },
-    mutations: {
-      retry: false
-    }
-  }
-})
-```
-
-### Query Usage Patterns
-```tsx
-import { useQuery, useMutation } from "@tanstack/react-query"
-import { apiRequest } from "@/lib/queryClient"
-
-// Fetch data
-const { data, isLoading, error } = useQuery({
-  queryKey: ["/api/users"],
-  // queryFn is auto-provided by queryClient
-})
-
-// With query params
-const { data } = useQuery({
-  queryKey: ["/api/users", { role: "admin", status: "active" }],
-})
-
-// Mutation
-const mutation = useMutation({
-  mutationFn: async (userData) => {
-    const res = await apiRequest("POST", "/api/users", userData)
-    return res.json()
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["/api/users"] })
-  }
-})
-```
-
----
-
 ## 🛣️ ROUTING (Wouter)
 
 ### Router Setup
@@ -707,23 +634,6 @@ if (match) {
 ```
 **Auto-restarts**: Backend server after updates
 
-#### POST `/api/rofyDownloadFiles`
-**Purpose**: Create and download project zip  
-**Body**:
-```typescript
-{
-  projectName: string
-}
-```
-**Response**:
-```typescript
-{
-  success: boolean,
-  downloadUrl?: string,  // e.g., "/downloads/project-name.zip"
-  error?: string
-}
-```
-
 #### POST `/api/restart-backend`
 **Purpose**: Restart user API server (5002) with fresh env variables
 
@@ -732,136 +642,6 @@ if (match) {
 
 #### POST `/api/restart-all`
 **Purpose**: Restart both frontend and backend servers with reloaded env variables
-
----
-
-## 🗄️ DATABASE (MongoDB with Mongoose)
-
-### Connection Setup
-Connect to MongoDB in your server entry file:
-```typescript
-import mongoose from 'mongoose'
-
-// In server/backend-entry.ts or server/index.ts
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/your-db-name'
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err))
-```
-
-### Environment Variable
-Add to your `.env` file:
-```
-MONGODB_URI=mongodb://localhost:27017/your-db-name
-# Or for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
-```
-
-### Creating Models
-Create Mongoose models in `server/models/` directory:
-
-**Example User Model** (`server/models/User.ts`):
-```typescript
-import mongoose, { Schema, Document } from 'mongoose'
-
-export interface IUser extends Document {
-  name: string
-  email: string
-  password: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-const UserSchema = new Schema<IUser>({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-}, {
-  timestamps: true  // Automatically adds createdAt and updatedAt
-})
-
-export const User = mongoose.model<IUser>('User', UserSchema)
-```
-
-### Using Models in Routes
-```typescript
-import { User } from './models/User'
-
-// Create
-app.post('/api/users', async (req, res) => {
-  try {
-    const user = await User.create(req.body)
-    res.json({ success: true, user })
-  } catch (error) {
-    res.status(400).json({ error: error.message })
-  }
-})
-
-// Read
-app.get('/api/users/:id', async (req, res) => {
-  const user = await User.findById(req.params.id)
-  res.json(user)
-})
-
-// Update
-app.put('/api/users/:id', async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }  // Return updated document
-  )
-  res.json(user)
-})
-
-// Delete
-app.delete('/api/users/:id', async (req, res) => {
-  await User.findByIdAndDelete(req.params.id)
-  res.json({ success: true })
-})
-```
-
-### Common Mongoose Patterns
-
-#### Query with filters
-```typescript
-const users = await User.find({ 
-  role: 'admin',
-  active: true 
-}).sort({ createdAt: -1 })
-```
-
-#### Populate references
-```typescript
-const PostSchema = new Schema({
-  title: String,
-  author: { type: Schema.Types.ObjectId, ref: 'User' }
-})
-
-const posts = await Post.find().populate('author')
-```
-
-#### Validation
-```typescript
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    validate: {
-      validator: (v: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v),
-      message: 'Invalid email format'
-    }
-  },
-  age: {
-    type: Number,
-    min: [18, 'Must be at least 18'],
-    max: [100, 'Must be less than 100']
-  }
-})
-```
-
----
 
 ## 🎯 COMMON PATTERNS
 
@@ -877,146 +657,61 @@ export default function MyPage() {
 }
 ```
 
-2. Add route in `client/src/App.tsx`:
-```tsx
-import MyPage from "@/pages/my-page"
-
-<Route path="/my-page" component={MyPage} />
-```
-
-### Creating a Form with Validation
-```tsx
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-
-const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(8, "Must be at least 8 characters")
-})
-
-export default function LoginForm() {
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "" }
-  })
-
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const res = await apiRequest("POST", "/api/login", data)
-    const json = await res.json()
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
-  )
-}
-```
-
 ### Creating API Routes
-Add routes to `server/backend-routes.ts` or `server/backend-entry.ts`:
+Add routes to `server/backend-routes.ts`:
+
+**Example Structure (DO NOT MODIFY THIS TEMPLATE):**
 ```typescript
-import express from "express"
-const app = express()
+import type { Express, Request, Response } from "express";
+import { createServer, type Server } from "http";
 
-app.post("/api/users", async (req, res) => {
-  const { name, email } = req.body
-  // Your logic here
-  res.json({ success: true, user: { name, email } })
-})
+export async function registerBackendRoutes(app: Express): Promise<Server> {
+  // Health check endpoint (DO NOT MODIFY)
+  app.get("/__health", (_req, res) => res.json({ status: "ok" }));
 
-app.listen(5002)
-```
+  // Ping API endpoint (DO NOT MODIFY)
+  app.get("/api/ping", (_req, res) => {
+    res.json({ message: "pong", timestamp: new Date().toISOString() });
+  });
 
-### Fetching Data with TanStack Query
-```tsx
-import { useQuery } from "@tanstack/react-query"
-
-function UserList() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["/api/users"],
-  })
-
-  if (isLoading) return <LoadingSpinner />
-  if (error) return <div>Error: {error.message}</div>
-
-  return (
-    <div>
-      {data?.map(user => (
-        <Card key={user.id}>
-          <CardContent>{user.name}</CardContent>
-        </Card>
-      ))}
-    </div>
-  )
-}
-```
-
-### Mutating Data
-```tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiRequest } from "@/lib/queryClient"
-
-function CreateUserForm() {
-  const queryClient = useQueryClient()
+  // ============================================
+  // ADD NEW API ROUTES BELOW THIS LINE
+  // ============================================
   
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      const res = await apiRequest("POST", "/api/users", data)
-      return res.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] })
-      toast({ title: "User created!" })
-    },
-    onError: (error) => {
-      toast({ 
-        title: "Error", 
-        description: error.message,
-        variant: "destructive"
-      })
-    }
-  })
+  // Example: Create user
+  // app.post("/api/users", async (req, res) => {
+  //   try {
+  //     // Handle user creation logic
+  //     res.json({ success: true, user: req.body });
+  //   } catch (error) {
+  //     res.status(500).json({ error: "Failed to create user" });
+  //   }
+  // });
 
-  return (
-    <Button onClick={() => mutation.mutate({ name: "John" })}>
-      Create User
-    </Button>
-  )
+  // Example: Get users
+  // app.get("/api/users", async (_req, res) => {
+  //   try {
+  //     // Handle fetching users
+  //     res.json({ users: [] });
+  //   } catch (error) {
+  //     res.status(500).json({ error: "Failed to fetch users" });
+  //   }
+  // });
+
+  // ============================================
+  // ADD NEW API ROUTES ABOVE THIS LINE
+  // ============================================
+
+  console.log("✅ Backend routes registered"); // DO NOT MODIFY
+  return createServer(app); // DO NOT MODIFY
 }
 ```
+
+**When adding new endpoints:**
+1. Always add them in the designated section between the comment markers
+2. Use proper HTTP methods (GET, POST, PUT, DELETE, PATCH)
+3. Always include try-catch blocks for async operations
+4. Always send appropriate status codes
 
 ---
 
