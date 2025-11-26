@@ -879,9 +879,3 @@ import { z } from "zod"
 - **New Hook**: `client/src/hooks/use-hook-name.ts`
 - **New Type**: `client/src/types/type-name.ts`
 - **API Route**: `server/backend-routes.ts` or `server/backend-entry.ts`
-- **Mongoose Model**: `server/models/ModelName.ts`
-
----
-
-**Last Updated**: November 26, 2025  
-**Template Version**: 1.0.0
