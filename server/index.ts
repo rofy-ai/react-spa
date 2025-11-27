@@ -43,7 +43,7 @@ app.use(async (req, res, next) => {
   if (req.originalUrl.startsWith("/api/")) {
     const alive = await isUserApiAlive();
     if (!alive) {
-      return res.status(502).json({ 
+      return res.status(502).json({
         error: "Backend API server is currently unavailable",
         details: "The backend process may have crashed or failed to start. Check server logs for details.",
         timestamp: new Date().toISOString()
@@ -88,7 +88,7 @@ const userAppDir = path.resolve(__dirname, "../client");
 
 let userApiProcess: ChildProcess | null = null;
 
-function shrinkError(rawError:string|Error): string {
+function shrinkError(rawError: string | Error): string {
   const text = typeof rawError === "string" ? rawError : rawError.stack || String(rawError);
 
   const lines = text.split("\n");
@@ -126,7 +126,7 @@ function logErrors(message: string) {
   const shrunk = shrinkError(message);
   const stripAnsiString = stripAnsi(shrunk);
   const chatId = extractChatId();
-  
+
   fetch('https://api.rezzo.ai/reviewer/review-errors', {
     method: 'POST',
     body: JSON.stringify({ chatId, errorLogs: [stripAnsiString] }),
@@ -140,17 +140,17 @@ function logErrors(message: string) {
 function reloadEnvVariables() {
   try {
     const envPath = path.join(__dirname, '../.env');
-    
+
     // Check if .env file exists
     if (fs.existsSync(envPath)) {
       // Read and parse .env file with override
       const result = dotenvConfig({ path: envPath, override: true });
-      
+
       if (result.error) {
         console.error('❌ Error reloading .env file:', result.error);
         return false;
       }
-      
+
       console.log('✅ Environment variables reloaded from .env');
       return true;
     } else {
@@ -222,10 +222,12 @@ function stopUserApiServer() {
 }
 
 function startViteDevServer() {
-  const devServer = spawn("npm", ["run", "dev"], {
+  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+  const devServer = spawn(npmCmd, ["run", "dev"], {
     cwd: userAppDir,
     stdio: ['ignore', 'pipe', 'pipe'], // inherit for main process, pipe for logging
     env: { ...process.env, FORCE_COLOR: "1", PORT: "5173" },
+    shell: true,
   });
 
   devServer.on("exit", (code, signal) => {
@@ -365,25 +367,25 @@ app.use('/api/downloads', express.static(path.join(__dirname, '../public/downloa
 app.post("/api/restart-all", async (req, res) => {
   try {
     console.log("🔄 Restarting all servers with fresh environment variables...");
-    
+
     // 1️⃣ Reload environment variables FIRST
     const envReloaded = reloadEnvVariables();
-    
+
     // 2️⃣ Stop both servers
     stopUserApiServer();
     if (app.get("env") === "development") {
       stopViteDevServer();
     }
-    
+
     // 3️⃣ Wait for clean shutdown
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // 4️⃣ Start both servers (they will inherit the new env vars)
     if (app.get("env") === "development") {
       startViteDevServer();
     }
     startUserApiServer();
-    
+
     // 5️⃣ Wait for backend to be ready
     let backendReady = false;
     for (let i = 0; i < 10; i++) {
@@ -391,10 +393,10 @@ app.post("/api/restart-all", async (req, res) => {
       backendReady = await isUserApiAlive();
       if (backendReady) break;
     }
-    
+
     console.log("✅ All servers restarted successfully with updated environment");
-    
-    res.json({ 
+
+    res.json({
       status: "success",
       message: "Both frontend (5173) and backend (5002) servers restarted",
       timestamp: new Date().toISOString(),
@@ -406,7 +408,7 @@ app.post("/api/restart-all", async (req, res) => {
     });
   } catch (err: any) {
     console.error("❌ Failed to restart servers:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       status: "error",
       message: err.message,
       timestamp: new Date().toISOString()
@@ -417,19 +419,19 @@ app.post("/api/restart-all", async (req, res) => {
 // 🔁 Vite restart endpoint
 app.post("/api/restart-vite", (req, res) => {
   if (app.get("env") !== "development") {
-    return res.status(400).json({ 
+    return res.status(400).json({
       status: "error",
-      message: "Vite restart only available in development mode" 
+      message: "Vite restart only available in development mode"
     });
   }
-  
+
   console.log("🔄 Restarting Vite dev server with fresh environment...");
-  
+
   // Reload env before restarting Vite
   reloadEnvVariables();
-  
+
   restartViteDevServer();
-  res.json({ 
+  res.json({
     status: "success",
     message: "Vite dev server (5173) restarted with updated environment",
     timestamp: new Date().toISOString()
@@ -438,17 +440,17 @@ app.post("/api/restart-vite", (req, res) => {
 
 app.post("/api/restart-backend", async (req, res) => {
   console.log("🔄 Restarting backend API server with fresh environment...");
-  
+
   // Reload env before restarting backend
   reloadEnvVariables();
-  
+
   stopUserApiServer();
-  
+
   // Wait for clean shutdown
   await new Promise(resolve => setTimeout(resolve, 500));
-  
+
   startUserApiServer();
-  res.json({ 
+  res.json({
     status: "success",
     message: "Backend API server (5002) restarted with updated environment",
     timestamp: new Date().toISOString()
@@ -492,7 +494,7 @@ if (app.get("env") === "development") {
           proxyRes.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
           proxyRes.on("end", () => {
             let body = Buffer.concat(chunks).toString("utf8");
-            body = injectHeadTag(body);            
+            body = injectHeadTag(body);
 
             // Fix headers for the modified payload
             const headers = { ...(proxyRes.headers as any) };

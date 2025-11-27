@@ -20,10 +20,12 @@ const userAppDir = path.resolve(__dirname, "../client");
 let viteProcess: ChildProcess | null = null;
 
 function startViteDevServer() {
-  const devServer = spawn("npm", ["run", "dev"], {
+  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+  const devServer = spawn(npmCmd, ["run", "dev"], {
     cwd: userAppDir,
     stdio: ['ignore', 'pipe', 'pipe'], // inherit for main process, pipe for logging
     env: { ...process.env, FORCE_COLOR: "1", PORT: "5173" },
+    shell: true,
   });
 
   devServer.on("exit", (code, signal) => {
@@ -39,7 +41,7 @@ function startViteDevServer() {
     console.log("INSIDE HERE", block);
     if (!block.trim()) return;
     log(block.trim());
-  }); 
+  });
 
   viteProcess = devServer;
 }
