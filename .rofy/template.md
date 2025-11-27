@@ -24,7 +24,6 @@
 - `server/zip.ts` - Project zip creation
 
 ### Configuration Files (DO NOT MODIFY)
-- `client/eslint.config.js` - ESLint configuration
 - `client/tsconfig.json` - TypeScript configuration
 - `client/tsconfig.app.json` - TypeScript app configuration
 - `client/tsconfig.node.json` - TypeScript node configuration
