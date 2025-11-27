@@ -177,13 +177,67 @@ react-spa/
 
 ## 🎨 UI COMPONENTS (shadcn/ui)
 
-### Import Pattern
+**Total Components**: 47
+
+**Import Pattern**:
 All UI components follow this pattern:
 ```typescript
 import { ComponentName } from "@/components/ui/component-name"
 ```
 
-### Component List & Props
+### Available Components
+
+#### Core Components
+- **Accordion** - Collapsible content sections (AccordionItem, AccordionTrigger, AccordionContent)
+- **Alert** - Contextual feedback messages (Alert, AlertTitle, AlertDescription)
+- **Alert Dialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogAction, AlertDialogCancel, etc.)
+- **Aspect Ratio** - Maintain responsive aspect ratios
+- **Avatar** - User profile images with fallback (Avatar, AvatarImage, AvatarFallback)
+- **Badge** - Status and category indicators (variants: default, secondary, destructive, outline, info, success, warning, error, primary)
+- **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator)
+- **Button** - Interactive button elements (variants: default, destructive, outline, secondary, ghost, link; sizes: sm, md, lg, xl, icon)
+- **Button Group** - Grouped button layouts
+- **Calendar** - Date picker with modern design (48px × 48px cells, generous spacing)
+- **Card** - Content containers (Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter)
+- **Carousel** - Image/content sliders with embla-carousel (Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious)
+- **Checkbox** - Checkbox input with label support
+- **Collapsible** - Expandable content areas (Collapsible, CollapsibleTrigger, CollapsibleContent)
+- **Command** - Command palette with cmdk (Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem)
+- **Context Menu** - Right-click context menus (ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, etc.)
+- **Dialog** - Modal dialogs (Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription)
+- **Draggable** - Drag-and-drop elements with Framer Motion (constraints, elastic, momentum options)
+- **Dropdown Menu** - Dropdown menus (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, etc.)
+- **Form** - Form components with React Hook Form integration (Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage)
+- **Hover Card** - Hover-triggered card popups (HoverCard, HoverCardTrigger, HoverCardContent)
+- **Input** - Text input fields
+- **Input OTP** - One-time password inputs (InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator)
+- **Label** - Form field labels
+- **Loading Spinner** - Loading indicators (sizes: sm, md, lg)
+- **Menubar** - Application menu bars (Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, etc.)
+- **Navigation Menu** - Navigation menus with dropdowns (NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink)
+- **Pagination** - Page navigation controls (Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis)
+- **Popover** - Popover overlays (Popover, PopoverTrigger, PopoverContent)
+- **Progress** - Progress bars
+- **Radio Group** - Radio button groups (RadioGroup, RadioGroupItem)
+- **Resizable** - Resizable panel layouts (ResizablePanelGroup, ResizablePanel, ResizableHandle)
+- **Scroll Area** - Custom scrollable areas (ScrollArea, ScrollBar)
+- **Select** - Dropdown selects (Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel, SelectSeparator)
+- **Separator** - Visual dividers
+- **Sheet** - Side panel overlays (Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter; positions: top, bottom, left, right)
+- **Sidebar** - Application sidebars (Sidebar, SidebarHeader, SidebarContent, SidebarFooter, etc.)
+- **Skeleton** - Loading placeholders
+- **Slider** - Range sliders
+- **Sonner** - Toast notifications (replaces react-hot-toast; types: success, error, warning, info, default; colored backgrounds)
+- **Switch** - Toggle switches
+- **Table** - Data tables (Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption)
+- **Tabs** - Tabbed content (Tabs, TabsList, TabsTrigger, TabsContent)
+- **Textarea** - Multi-line text inputs
+- **Toaster** - Toast notification container (for Sonner)
+- **Toggle** - Toggle buttons (variants: default, outline; sizes: sm, md, lg)
+- **Toggle Group** - Grouped toggle buttons (ToggleGroup, ToggleGroupItem; types: single, multiple)
+- **Tooltip** - Hover tooltips (Tooltip, TooltipTrigger, TooltipContent, TooltipProvider)
+
+### Component Details & Props
 
 #### **Button** (`@/components/ui/button`)
 **Exports**: `Button`, `buttonVariants`

@@ -1,187 +1,177 @@
+# Design Guidelines
+
 ## Design Approach
 
-Modern, clean, and professional aesthetic with a focus on clarity and usability. The design balances visual appeal with functional simplicity. Emphasis on whitespace, purple-blue gradients, subtle depth through shadows, and smooth micro-interactions that feel responsive and polished.
-
-The overall mood is confident yet approachable—professional enough for business use, but warm enough to feel human. Every element serves a purpose, with no unnecessary decoration.
+Modern, clean interface with purple primary color, dramatic colored shadows (30% opacity), and smooth animations. Elements grow 2-5% on hover, 12px rounded corners, bold typography for hierarchy.
 
 ---
 
-## Color System
+## Colors
 
-### Primary Palette
-- **Primary** – Purple tones for brand identity, trust, and action
-- **Secondary** – Blue tones for supporting accents and depth
+**Purple** - Primary brand (actions, focus, links)
 
-### Gradients
-- **Primary Gradient** – Purple to blue, used for hero sections, CTAs, featured elements
-- **Accent Gradient** – Blue to purple (reversed) for variety and highlights
-- **Subtle Gradient** – Light purple to light blue for backgrounds, cards
-- Direction: typically left-to-right or diagonal (135deg)
+**Semantic:**
+- Green = Success, positive
+- Amber = Warnings, pending
+- Red = Errors, danger
+- Blue = Information
 
-### Semantic Colors
-- **Success** – Emerald green for positive states, confirmations
-- **Warning** – Amber for caution, pending states
-- **Error** – Rose/red for errors, destructive actions
-- **Info** – Sky blue for informational messages
-
-### Neutrals
-- **Background** – Clean whites and very light grays
-- **Surface** – White cards with subtle elevation
-- **Border** – Light gray, barely visible separation
-- **Text Primary** – Near-black for readability
-- **Text Secondary** – Medium gray for supporting text
-- **Text Muted** – Light gray for placeholders, hints
+**Backgrounds:** White/light gray (light mode), deep blue-gray (dark mode)
 
 ---
 
 ## Typography
 
-### Font Families
-- **Primary** – Jost for all text (headings and body)
-- **Mono** – JetBrains Mono or system monospace for code
+**Font:** Jost (modern sans-serif)
 
-### Hierarchy
-- **Display** – Extra large, bold, used sparingly for hero sections
-- **H1** – Page titles, bold, generous margin below
-- **H2** – Section headers, semibold
-- **H3** – Subsection headers, medium weight
-- **Body** – Default readable size, comfortable line height
-- **Small** – Captions, labels, helper text
+**Sizes:** 12px (captions) · 14px (labels) · 16px (body/buttons) · 18px (card titles) · 20px (headers) · 24px (page titles)
 
-### Principles
-- High contrast for readability
-- Consistent line heights (1.5 for body, 1.2 for headings)
-- Letter spacing slightly tightened for headings
+**Weights:** 400 (body) · 500 (emphasis) · 600 (buttons/badges) · 700 (titles)
 
 ---
 
-## Layout & Spacing
+## Spacing
 
-### Spacing Scale
-Base unit: 4px. Common increments: 4, 8, 12, 16, 24, 32, 48, 64.
+**Scale:** 4px multiples (4, 8, 12, 16, 24, 32)
+- Small gaps: 8-16px
+- Card padding: 24px
+- Page margins: 24-32px
 
-### Container Widths
-- **Narrow** – Forms, auth pages, focused content
-- **Default** – Standard page content
-- **Wide** – Dashboards, data-heavy layouts
-- **Full** – Edge-to-edge sections, heroes
-
-### Grid
-- 12-column grid for complex layouts
-- Single column for mobile, expanding on larger screens
-- Consistent gutters matching spacing scale
-
-### Rhythm
-- Generous padding inside cards and sections
-- Consistent vertical spacing between sections
-- Breathing room around interactive elements
+**Corners:** 6px (inputs/buttons) · 12px (cards/dialogs) · Full (badges/pills)
 
 ---
 
 ## Components
 
 ### Buttons
-- **Primary** – Purple-blue gradient background, white text, main actions
-- **Secondary** – Subtle background or outline, supporting actions
-- **Ghost** – Transparent, minimal visual weight
-- **Destructive** – Red-tinted for dangerous actions
-- All buttons: rounded corners, comfortable padding, clear hover/focus states
+Primary (purple), Destructive (red), Outline (border), Secondary (gray), Ghost (transparent), Link (underlined)
+- Hover: Grow 2%, bright shadow, 10% brighter
+- Press: Shrink to 95%
+- Focus: Purple ring
+- Disabled: 50% opacity
+
+### Badges
+Pill-shaped, semibold, 8 variants
+- Hover: Grow 5%, colored glow (30% opacity)
+- Colors: Green/Amber/Red/Blue/Purple/Gray
+
+### Alerts
+Thick colored left border, matching icon, subtle background tint
 
 ### Cards
-- Clean white background with subtle shadow
-- Optional subtle gradient border or accent
-- Rounded corners (medium radius)
-- Generous internal padding
-- Hover: slight shadow increase or gradient border glow
+12px corners, soft shadow (prominent on hover), 24px padding
+- Structure: Header (title + description) → Content → Footer
 
 ### Forms
-- Clear labels above inputs
-- Comfortable input height with padding
-- Subtle border, purple-blue focus ring on interaction
-- Inline validation with semantic colors
+- Inputs: 40px height, purple border on focus, 6px corners
+- Labels: Above fields, 14px medium weight
+- Layout: 16px spacing, buttons at bottom
 
-### Navigation
-- Clean header with logo left, nav center or right
-- Clear active states using primary purple
-- Mobile: hamburger menu or bottom nav
+### Dialogs & Sheets
+12px corners, dramatic shadow, dark backdrop
+- Sheets slide from edges (top/bottom/left/right)
 
-### Modals & Dialogs
-- Centered with backdrop overlay
-- Clear title, body, action buttons
-- Easy dismissal (X button, click outside, escape key)
-- Smooth fade/scale entrance
+### Calendar
+48×48px cells, 24px padding
+- Selected: Grows 5%, purple ring, shadow
+- Today: Gray background, purple border
+- Hover: Grows 5%, rounded
+
+### Draggable
+Hand cursor, grows 105% while dragging, can be constrained
+
+### Toasts (Sonner)
+Slide up from bottom, colored backgrounds, auto-dismiss
 
 ---
 
-## Animations & Interactions
+## Animations
 
-### Motion Philosophy
-Animations should feel swift and purposeful—never slow or decorative. They provide feedback, guide attention, and create polish.
+**Timing:** 150ms (quick) · 200ms (standard) · 300ms (default) · 500ms (complex)
 
-### Timing
-- **Fast** – 100-150ms for hovers, toggles, small state changes
-- **Medium** – 200-300ms for modals, dropdowns, transitions
-- **Slow** – 400-500ms for complex reveals
+**Scale:**
+- Small elements: 5% on hover
+- Large elements: 2% on hover
+- Press: 95%
+- Dragging: 105%
 
-### Micro-interactions
-- Buttons: slight scale or shadow lift on hover
-- Cards: shadow depth increase on hover
-- Inputs: smooth border color transition on focus
-- Loading: skeleton shimmer or spinner
-- Gradients: subtle shift or shimmer on hover for featured elements
+**Shadows:** Subtle → dramatic on hover with colored glow (30% opacity)
+
+**Brightness:** Primary +10%, Secondary +5%
+
+**Focus:** Purple ring (2px thick, 2px offset) on keyboard navigation only
 
 ---
 
 ## Icons
 
-### Style
-- Outline style for most UI icons
-- Solid/filled for active states or emphasis
-- Consistent stroke width across icon set
-- Rounded line caps for friendly feel
+**Lucide React** - Consistent stroke, rounded, outline style
 
-### Size
-- Small: inline with text, labels
-- Medium: buttons, navigation items
-- Large: empty states, feature highlights
+**Sizes:** 16px (standard) · 20px (larger) · 24px (highlights)
+
+**With text:** Icon left with small gap
 
 ---
 
 ## Accessibility
 
-### Contrast
-- Minimum 4.5:1 for body text
-- Minimum 3:1 for large text and UI elements
-- Ensure gradient text has sufficient contrast
-
-### Focus States
-- Visible purple-blue focus ring on all interactive elements
-- High contrast focus indicators
-- Never remove focus outlines without replacement
-
-### Keyboard Navigation
-- Logical tab order
-- All actions accessible via keyboard
-
-### Screen Readers
-- Semantic HTML structure
-- ARIA labels where needed
-- Meaningful alt text for images
+- **Contrast:** 4.5:1 (text), 3:1 (UI/large text)
+- **Keyboard:** Tab through all, Enter/Space activates, Escape closes
+- **Focus:** Always visible purple ring
+- **Touch:** 44×44px minimum targets
+- **Screen readers:** Semantic HTML, descriptive labels
 
 ---
 
-## Responsive Behavior
+## Responsive
 
-### Strategy
-Mobile-first approach. Design for smallest screens, enhance for larger.
+**Mobile-first approach**
 
-### Breakpoints
-- **Mobile** – Default, single column
-- **Tablet** – ~768px, two columns, expanded nav
-- **Desktop** – ~1024px, full layout, sidebars
-- **Wide** – ~1280px+, max-width containers
+**Breakpoints:** Mobile (<640px) · Tablet (768px+) · Desktop (1024px+) · Large (1280px+)
 
-### Adaptations
-- Stack horizontal layouts vertically on mobile
-- Collapse navigation to hamburger/drawer
-- Touch-friendly tap targets (min 44px)
+**Adaptations:**
+- Cards: Stack (mobile) → Grid (desktop)
+- Forms: Single column (mobile) → Multi-column (desktop)
+- Navigation: Hidden (mobile) → Visible (desktop)
+- Dialogs: Full-screen (mobile) → Centered (desktop)
+
+---
+
+
+## Principles
+
+1. **Consistency** - Same patterns throughout
+2. **Clarity** - Obvious interfaces
+3. **Feedback** - Visual response to actions
+4. **Accessibility** - Keyboard + screen reader support
+5. **Performance** - Smooth, fast animations
+6. **Responsiveness** - Great on all screens
+7. **Delight** - Subtle polish
+
+---
+
+## Best Practices
+
+**Building:**
+- TypeScript for type safety
+- Single-purpose components
+- Keyboard navigation support
+- Test light + dark modes
+- Proper contrast
+- Loading states
+- Helpful error messages
+
+**Consistency:**
+- Semantic colors (green=good, red=bad, amber=caution)
+- 4px spacing multiples
+- 12px rounded corners
+- Hover effects on interactive elements
+- 30% opacity colored shadows
+- Focus indicators always visible
+- Semibold for buttons/badges, Bold for titles
+
+**Dark Mode:**
+- Test everything
+- Visible shadows
+- Proper contrast
+- Deeper colors
