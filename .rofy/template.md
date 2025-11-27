@@ -77,21 +77,24 @@ react-spa/
 ├── client/                          # Frontend React application
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── ui/                  # shadcn/ui components (47 components)
+│   │   │   ├── mode-toggle.tsx      # Theme toggle component
+│   │   │   ├── theme-provider.tsx   # Theme context provider
+│   │   │   └── ui/                  # shadcn/ui components (48 components)
 │   │   ├── pages/                   # Route components
-│   │   │   ├── home.tsx            # Homepage
-│   │   │   └── not-found.tsx       # 404 page
+│   │   │   ├── home.tsx             # Homepage
+│   │   │   ├── not-found.tsx        # 404 page
+│   │   │   └── component-showcase.tsx # Component showcase page
 │   │   ├── hooks/                   # Custom React hooks
-│   │   │   ├── use-toast.ts        # Toast notifications (react-hot-toast wrapper)
-│   │   │   └── use-mobile.tsx      # Mobile breakpoint detection
+│   │   │   ├── use-toast.ts         # Toast notifications (react-hot-toast wrapper)
+│   │   │   └── use-mobile.tsx       # Mobile breakpoint detection
 │   │   ├── lib/                     # Utility libraries
-│   │   │   ├── utils.ts            # cn() function for className merging
-│   │   │   └── queryClient.ts      # TanStack Query configuration
+│   │   │   ├── utils.ts             # cn() function for className merging
+│   │   │   └── queryClient.ts       # TanStack Query configuration
 │   │   ├── context/                 # Empty - for React Context files
 │   │   ├── contexts/                # Empty - for React Context files
 │   │   ├── types/                   # Empty - for TypeScript types
 │   │   ├── utils/                   # Empty - for utility functions
-│   │   ├── App.tsx                  # Root App component with routing
+│   │   ├── App.tsx                  # Root App component with routing (named export)
 │   │   ├── main.tsx                 # React entry point
 │   │   ├── index.css                # Tailwind CSS imports
 │   │   └── global.d.ts              # Global TypeScript declarations
@@ -177,7 +180,7 @@ react-spa/
 
 ## 🎨 UI COMPONENTS (shadcn/ui)
 
-**Total Components**: 47
+**Total Components**: 48
 
 **Import Pattern**:
 All UI components follow this pattern:
@@ -190,11 +193,11 @@ import { ComponentName } from "@/components/ui/component-name"
 #### Core Components
 - **Accordion** - Collapsible content sections (AccordionItem, AccordionTrigger, AccordionContent)
 - **Alert** - Contextual feedback messages (Alert, AlertTitle, AlertDescription)
-- **Alert Dialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogAction, AlertDialogCancel, etc.)
+- **Alert Dialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, DialogContent, AlertDialogAction, AlertDialogCancel, etc.)
 - **Aspect Ratio** - Maintain responsive aspect ratios
 - **Avatar** - User profile images with fallback (Avatar, AvatarImage, AvatarFallback)
 - **Badge** - Status and category indicators (variants: default, secondary, destructive, outline, info, success, warning, error, primary)
-- **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator)
+- **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbEllipsis)
 - **Button** - Interactive button elements (variants: default, destructive, outline, secondary, ghost, link; sizes: sm, md, lg, xl, icon)
 - **Button Group** - Grouped button layouts
 - **Calendar** - Date picker with modern design (48px × 48px cells, generous spacing)
@@ -206,6 +209,7 @@ import { ComponentName } from "@/components/ui/component-name"
 - **Context Menu** - Right-click context menus (ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, etc.)
 - **Dialog** - Modal dialogs (Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription)
 - **Draggable** - Drag-and-drop elements with Framer Motion (constraints, elastic, momentum options)
+- **Drawer** - Bottom drawer component with vaul (Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose)
 - **Dropdown Menu** - Dropdown menus (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, etc.)
 - **Form** - Form components with React Hook Form integration (Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage)
 - **Hover Card** - Hover-triggered card popups (HoverCard, HoverCardTrigger, HoverCardContent)
@@ -552,55 +556,6 @@ All follow similar patterns with Radix UI primitives:
 
 ---
 
-## 🪝 CUSTOM HOOKS
-
-### useToast (`@/hooks/use-toast`)
-**Purpose**: Display toast notifications (wrapper for react-hot-toast)
-```typescript
-function useToast() {
-  return {
-    toast: (options: ToastOptions) => void,
-    dismiss: (toastId?: string) => void
-  }
-}
-
-type ToastOptions = {
-  title?: string
-  description?: string
-  variant?: "default" | "destructive"
-  duration?: number  // default: 4000ms
-}
-```
-**Usage**:
-```tsx
-const { toast } = useToast()
-
-toast({
-  title: "Success",
-  description: "Your changes have been saved",
-  variant: "default"
-})
-
-toast({
-  title: "Error",
-  description: "Something went wrong",
-  variant: "destructive"
-})
-```
-
-### useIsMobile (`@/hooks/use-mobile`)
-**Purpose**: Detect mobile viewport (< 768px)
-```typescript
-function useIsMobile(): boolean
-```
-**Usage**:
-```tsx
-const isMobile = useIsMobile()
-return isMobile ? <MobileNav /> : <DesktopNav />
-```
-
----
-
 ## 🛣️ ROUTING (Wouter)
 
 ### Router Setup
@@ -781,9 +736,15 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 - **zod**: 3.24.2 (validation)
 - **tailwindcss**: 3.4.17 (styling)
 - **lucide-react**: 0.453.0 (icons)
-- **react-hot-toast**: 2.6.0 (notifications)
+- **sonner**: Latest (toast notifications)
+- **framer-motion**: 11.13.1 (animations, draggable)
 - **class-variance-authority**: 0.7.1 (variant styles)
 - **tailwind-merge**: 2.6.0 (class merging)
+- **clsx**: Latest (className utilities)
+- **react-day-picker**: Latest (calendar/date picker)
+- **embla-carousel-react**: Latest (carousel)
+- **vaul**: Latest (drawer component)
+- **cmdk**: Latest (command palette)
 
 ### Backend
 - **express**: 4.21.2
@@ -794,6 +755,32 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
 
 ### UI Components (Radix UI)
 - All `@radix-ui/react-*` primitives for accessible components
+- **@radix-ui/react-accordion**
+- **@radix-ui/react-alert-dialog**
+- **@radix-ui/react-aspect-ratio**
+- **@radix-ui/react-avatar**
+- **@radix-ui/react-checkbox**
+- **@radix-ui/react-collapsible**
+- **@radix-ui/react-context-menu**
+- **@radix-ui/react-dialog**
+- **@radix-ui/react-dropdown-menu**
+- **@radix-ui/react-hover-card**
+- **@radix-ui/react-label**
+- **@radix-ui/react-menubar**
+- **@radix-ui/react-navigation-menu**
+- **@radix-ui/react-popover**
+- **@radix-ui/react-progress**
+- **@radix-ui/react-radio-group**
+- **@radix-ui/react-scroll-area**
+- **@radix-ui/react-select**
+- **@radix-ui/react-separator**
+- **@radix-ui/react-slider**
+- **@radix-ui/react-slot**
+- **@radix-ui/react-switch**
+- **@radix-ui/react-tabs**
+- **@radix-ui/react-toggle**
+- **@radix-ui/react-toggle-group**
+- **@radix-ui/react-tooltip**
 
 ---
 
@@ -906,6 +893,8 @@ Always use `cn()` for merging classes:
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { ModeToggle } from "@/components/mode-toggle"
+import { ThemeProvider, useTheme } from "@/components/theme-provider"
 
 // Hooks
 import { useToast } from "@/hooks/use-toast"
@@ -916,7 +905,7 @@ import { cn } from "@/lib/utils"
 import { apiRequest } from "@/lib/queryClient"
 
 // Routing
-import { Link, useLocation } from "wouter"
+import { Link, useLocation, Route, Switch } from "wouter"
 
 // Data Fetching
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -925,11 +914,26 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+
+// Toast Notifications
+import { toast } from "sonner"
+```
+
+### Export Patterns
+All page components and the App component use **named exports**:
+```typescript
+// ✅ Correct - Named Exports
+export function Home() { ... }
+export function App() { ... }
+export function ComponentShowcase() { ... }
+
+// ❌ Wrong - Default Exports (not used in this project)
+export default function Home() { ... }
 ```
 
 ### File Creation Locations
-- **New Page**: `client/src/pages/page-name.tsx`
+- **New Page**: `client/src/pages/page-name.tsx` (use named export)
 - **New Component**: `client/src/components/ComponentName.tsx`
 - **New Hook**: `client/src/hooks/use-hook-name.ts`
 - **New Type**: `client/src/types/type-name.ts`
-- **API Route**: `server/backend-routes.ts` or `server/backend-entry.ts`
+- **API Route**: `server/backend-routes.ts`
