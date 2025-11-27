@@ -2,13 +2,12 @@
 
 **Template Type**: React Single Page Application with Express Backend  
 **Framework**: React 19.1.1 + Vite 7.1.2 + Express  
-**UI Library**: shadcn/ui (New York style)  
-**Styling**: Tailwind CSS 3.4.17  
-**Routing**: Wouter 3.3.5  
-**State Management**: TanStack Query 5.60.5  
-**Form Handling**: React Hook Form 7.55.0 + Zod 3.24.2  
-**Database**: MongoDB with Mongoose 9.0.0
-
+**UI Library**: shadcn/ui 
+**Styling**: Tailwind CSS 
+**Routing**: Wouter  
+**State Management**: TanStack Query 
+**Form Handling**: React Hook Form + Zod 
+**Database**: MongoDB with Mongoose 
 ---
 
 ## 🚫 FORBIDDEN FILES (DO NOT EDIT)
