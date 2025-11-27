@@ -1,5 +1,3 @@
-# Design Language
-
 ## Design Approach
 
 Modern, clean, and professional aesthetic with a focus on clarity and usability. The design balances visual appeal with functional simplicity. Emphasis on whitespace, purple-blue gradients, subtle depth through shadows, and smooth micro-interactions that feel responsive and polished.
