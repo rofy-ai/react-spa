@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Calendar } from "@/components/ui/calendar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { User, Settings, Bell, CreditCard } from "lucide-react"
 import {
     Accordion,
     AccordionContent,
@@ -101,6 +102,15 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import {
+    Footer,
+    FooterContent,
+    FooterSection,
+    FooterTitle,
+    FooterLink,
+    FooterText,
+    FooterDivider,
+} from "@/components/ui/footer"
+import {
     InputOTP,
     InputOTPGroup,
     InputOTPSlot,
@@ -135,6 +145,20 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarGroupLabel,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar"
 import { Draggable } from "@/components/ui/draggable"
 import {
     Table,
@@ -179,7 +203,7 @@ import {
     ResizablePanel,
     ResizableHandle,
 } from "@/components/ui/resizable"
-import { AlertCircle, Info, Home, ChevronRight, Calendar as CalendarIcon } from "lucide-react"
+import { AlertCircle, Info, Home, ChevronRight, Calendar as CalendarIcon, Menu, Twitter, Github, Linkedin } from "lucide-react"
 import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -202,7 +226,7 @@ const COMPONENTS: ComponentName[] = [
     "Avatar", "Badge", "Breadcrumb", "Button", "Button Group",
     "Calendar", "Card", "Carousel",
     "Checkbox", "Collapsible", "Command", "Context Menu",
-    "Dialog", "Draggable", "Dropdown Menu", "Form",
+    "Dialog", "Draggable", "Dropdown Menu", "Footer", "Form",
     "Hover Card", "Input", "Input OTP", "Label",
     "Menubar", "Navigation Menu", "Pagination", "Popover",
     "Progress", "Radio Group", "Resizable", "Scroll Area",
@@ -460,31 +484,58 @@ export function ComponentShowcase() {
 
             case "Card":
                 return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Card size="sm" radius="none">
-                            <CardHeader>
-                                <CardTitle>Small Square</CardTitle>
-                                <CardDescription>Size: small, Radius: none</CardDescription>
-                            </CardHeader>
-                            <CardContent>Card content goes here</CardContent>
-                            <CardFooter><Button size="sm">Action</Button></CardFooter>
-                        </Card>
-                        <Card size="md" radius="md">
-                            <CardHeader>
-                                <CardTitle>Medium Rounded</CardTitle>
-                                <CardDescription>Size: medium, Radius: medium</CardDescription>
-                            </CardHeader>
-                            <CardContent>Card content goes here</CardContent>
-                            <CardFooter><Button size="sm">Action</Button></CardFooter>
-                        </Card>
-                        <Card size="lg" radius="xl">
-                            <CardHeader>
-                                <CardTitle>Large Extra Round</CardTitle>
-                                <CardDescription>Size: large, Radius: xl</CardDescription>
-                            </CardHeader>
-                            <CardContent>Card content goes here with more space</CardContent>
-                            <CardFooter><Button size="sm">Action</Button></CardFooter>
-                        </Card>
+                    <div className="space-y-6">
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4">Default Cards (with shadow)</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Card size="sm" radius="none">
+                                    <CardHeader>
+                                        <CardTitle>Small Square</CardTitle>
+                                        <CardDescription>Size: small, Radius: none</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>Card content goes here</CardContent>
+                                    <CardFooter><Button size="sm">Action</Button></CardFooter>
+                                </Card>
+                                <Card size="md" radius="md">
+                                    <CardHeader>
+                                        <CardTitle>Medium Rounded</CardTitle>
+                                        <CardDescription>Size: medium, Radius: medium</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>Card content goes here</CardContent>
+                                    <CardFooter><Button size="sm">Action</Button></CardFooter>
+                                </Card>
+                                <Card size="lg" radius="xl">
+                                    <CardHeader>
+                                        <CardTitle>Large Extra Round</CardTitle>
+                                        <CardDescription>Size: large, Radius: xl</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>Card content goes here with more space</CardContent>
+                                    <CardFooter><Button size="sm">Action</Button></CardFooter>
+                                </Card>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4">Flat Cards (no shadow)</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Card variant="flat" size="sm" radius="none">
+                                    <CardHeader>
+                                        <CardTitle>Flat Small</CardTitle>
+                                        <CardDescription>Border and background only</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>No shadow or hover effect</CardContent>
+                                    <CardFooter><Button size="sm">Action</Button></CardFooter>
+                                </Card>
+                                <Card variant="flat" size="md" radius="md">
+                                    <CardHeader>
+                                        <CardTitle>Flat Medium</CardTitle>
+                                        <CardDescription>Clean minimal style</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>Perfect for subtle layouts</CardContent>
+                                    <CardFooter><Button size="sm">Action</Button></CardFooter>
+                                </Card>
+                            </div>
+                        </div>
                     </div>
                 )
 
@@ -709,25 +760,59 @@ export function ComponentShowcase() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Tabs</CardTitle>
-                            <CardDescription>Organized content sections</CardDescription>
+                            <CardDescription>Organized content sections with icons</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Tabs defaultValue="account">
-                                <TabsList>
-                                    <TabsTrigger value="account">Account</TabsTrigger>
-                                    <TabsTrigger value="password">Password</TabsTrigger>
-                                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="account" className="mt-4">
-                                    <p className="text-sm text-muted-foreground">Make changes to your account here. Click save when you're done.</p>
-                                </TabsContent>
-                                <TabsContent value="password" className="mt-4">
-                                    <p className="text-sm text-muted-foreground">Change your password here. After saving, you'll be logged out.</p>
-                                </TabsContent>
-                                <TabsContent value="settings" className="mt-4">
-                                    <p className="text-sm text-muted-foreground">Update your settings and preferences here.</p>
-                                </TabsContent>
-                            </Tabs>
+                        <CardContent className="space-y-8">
+                            {/* Basic Tabs */}
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Basic Tabs</h4>
+                                <Tabs defaultValue="account">
+                                    <TabsList>
+                                        <TabsTrigger value="account">Account</TabsTrigger>
+                                        <TabsTrigger value="password">Password</TabsTrigger>
+                                        <TabsTrigger value="settings">Settings</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="account" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">Make changes to your account here. Click save when you're done.</p>
+                                    </TabsContent>
+                                    <TabsContent value="password" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">Change your password here. After saving, you'll be logged out.</p>
+                                    </TabsContent>
+                                    <TabsContent value="settings" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">Update your settings and preferences here.</p>
+                                    </TabsContent>
+                                </Tabs>
+                            </div>
+
+                            {/* Tabs with Icons */}
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Tabs with Icons</h4>
+                                <Tabs defaultValue="profile">
+                                    <TabsList>
+                                        <TabsTrigger value="profile" className="gap-2">
+                                            <User className="h-4 w-4" />
+                                            Profile
+                                        </TabsTrigger>
+                                        <TabsTrigger value="notifications" className="gap-2">
+                                            <Bell className="h-4 w-4" />
+                                            Notifications
+                                        </TabsTrigger>
+                                        <TabsTrigger value="billing" className="gap-2">
+                                            <CreditCard className="h-4 w-4" />
+                                            Billing
+                                        </TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="profile" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">View and edit your profile information.</p>
+                                    </TabsContent>
+                                    <TabsContent value="notifications" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">Manage your notification preferences.</p>
+                                    </TabsContent>
+                                    <TabsContent value="billing" className="mt-4">
+                                        <p className="text-sm text-muted-foreground">View your billing information and payment methods.</p>
+                                    </TabsContent>
+                                </Tabs>
+                            </div>
                         </CardContent>
                     </Card>
                 )
@@ -1481,6 +1566,97 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
+            case "Footer":
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Footer</CardTitle>
+                            <CardDescription>Application footer with multiple sections and links</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Full Footer</h4>
+                                <Footer className="rounded-lg">
+                                    <FooterContent>
+                                        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+                                            <FooterSection>
+                                                <FooterTitle>Product</FooterTitle>
+                                                <FooterLink>Features</FooterLink>
+                                                <FooterLink>Pricing</FooterLink>
+                                                <FooterLink>Documentation</FooterLink>
+                                                <FooterLink>Changelog</FooterLink>
+                                            </FooterSection>
+                                            <FooterSection>
+                                                <FooterTitle>Company</FooterTitle>
+                                                <FooterLink>About Us</FooterLink>
+                                                <FooterLink>Careers</FooterLink>
+                                                <FooterLink>Blog</FooterLink>
+                                                <FooterLink>Press</FooterLink>
+                                            </FooterSection>
+                                            <FooterSection>
+                                                <FooterTitle>Resources</FooterTitle>
+                                                <FooterLink>Community</FooterLink>
+                                                <FooterLink>Contact</FooterLink>
+                                                <FooterLink>Support</FooterLink>
+                                                <FooterLink>Status</FooterLink>
+                                            </FooterSection>
+                                            <FooterSection>
+                                                <FooterTitle>Legal</FooterTitle>
+                                                <FooterLink>Privacy</FooterLink>
+                                                <FooterLink>Terms</FooterLink>
+                                                <FooterLink>Cookie Policy</FooterLink>
+                                                <FooterLink>Licenses</FooterLink>
+                                            </FooterSection>
+                                        </div>
+                                        <FooterDivider />
+                                        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+                                            <FooterText>© 2024 Rofy. All rights reserved.</FooterText>
+                                            <div className="flex gap-4">
+                                                <FooterLink>
+                                                    <Twitter className="h-5 w-5" />
+                                                </FooterLink>
+                                                <FooterLink>
+                                                    <Github className="h-5 w-5" />
+                                                </FooterLink>
+                                                <FooterLink>
+                                                    <Linkedin className="h-5 w-5" />
+                                                </FooterLink>
+                                            </div>
+                                        </div>
+                                    </FooterContent>
+                                </Footer>
+                            </div>
+
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Simple Footer</h4>
+                                <Footer className="rounded-lg">
+                                    <FooterContent className="py-4">
+                                        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+                                            <FooterText>© 2024 Rofy</FooterText>
+                                            <div className="flex gap-4">
+                                                <FooterLink>Privacy</FooterLink>
+                                                <FooterLink>Terms</FooterLink>
+                                                <FooterLink>Contact</FooterLink>
+                                            </div>
+                                        </div>
+                                    </FooterContent>
+                                </Footer>
+                            </div>
+
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Minimal Footer</h4>
+                                <Footer className="rounded-lg">
+                                    <FooterContent className="py-4">
+                                        <FooterText className="text-center">
+                                            Made with ❤️ by Rofy
+                                        </FooterText>
+                                    </FooterContent>
+                                </Footer>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+
             case "Form":
                 return (
                     <Card>
@@ -1721,6 +1897,81 @@ export function ComponentShowcase() {
                                         </MenubarContent>
                                     </MenubarMenu>
                                 </Menubar>
+                            </div>
+
+                            <div>
+                                <h4 className="text-sm font-semibold mb-3">Mobile Style</h4>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button variant="outline" size="icon">
+                                            <Menu className="h-5 w-5" />
+                                            <span className="sr-only">Open menu</span>
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-[280px]">
+                                        <SheetHeader>
+                                            <SheetTitle>Menu</SheetTitle>
+                                            <SheetDescription>
+                                                Navigate through the application
+                                            </SheetDescription>
+                                        </SheetHeader>
+                                        <div className="mt-6 space-y-4">
+                                            <div>
+                                                <h4 className="mb-2 text-sm font-semibold">File</h4>
+                                                <div className="space-y-1">
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        New Tab
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        New Window
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Share
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Print
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <Separator />
+                                            <div>
+                                                <h4 className="mb-2 text-sm font-semibold">Edit</h4>
+                                                <div className="space-y-1">
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Undo
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Redo
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Cut
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Copy
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Paste
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <Separator />
+                                            <div>
+                                                <h4 className="mb-2 text-sm font-semibold">View</h4>
+                                                <div className="space-y-1">
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Reload
+                                                    </Button>
+                                                    <Button variant="ghost" className="w-full justify-start">
+                                                        Full Screen
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
+                                <p className="mt-2 text-xs text-muted-foreground">
+                                    Mobile-friendly menu using Sheet component
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -2015,6 +2266,114 @@ export function ComponentShowcase() {
                                     💡 Sonner provides rich features including actions, descriptions, and promise handling.
                                 </p>
                             </div>
+                        </CardContent>
+                    </Card>
+                )
+
+            case "Sidebar":
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Sidebar</CardTitle>
+                            <CardDescription>Collapsible navigation sidebar with menu items</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <SidebarProvider>
+                                <div className="border rounded-lg overflow-hidden flex h-[400px] w-full">
+                                    <Sidebar className="border-r bg-muted/50">
+                                        <SidebarHeader className="border-b px-4 py-3 bg-background">
+                                            <h3 className="font-semibold">My Application</h3>
+                                        </SidebarHeader>
+                                        <SidebarContent>
+                                            <SidebarGroup>
+                                                <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+                                                <SidebarGroupContent>
+                                                    <SidebarMenu>
+                                                        <SidebarMenuItem>
+                                                            <SidebarMenuButton isActive className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                                                                <Home className="h-4 w-4" />
+                                                                <span>Dashboard</span>
+                                                            </SidebarMenuButton>
+                                                        </SidebarMenuItem>
+                                                        <SidebarMenuItem>
+                                                            <SidebarMenuButton className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                                                                <User className="h-4 w-4" />
+                                                                <span>Profile</span>
+                                                            </SidebarMenuButton>
+                                                        </SidebarMenuItem>
+                                                        <SidebarMenuItem>
+                                                            <SidebarMenuButton className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                                                                <Settings className="h-4 w-4" />
+                                                                <span>Settings</span>
+                                                            </SidebarMenuButton>
+                                                        </SidebarMenuItem>
+                                                        <SidebarMenuItem>
+                                                            <SidebarMenuButton className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                                                                <Bell className="h-4 w-4" />
+                                                                <span>Notifications</span>
+                                                            </SidebarMenuButton>
+                                                        </SidebarMenuItem>
+                                                    </SidebarMenu>
+                                                </SidebarGroupContent>
+                                            </SidebarGroup>
+                                            <SidebarGroup>
+                                                <SidebarGroupLabel>Account</SidebarGroupLabel>
+                                                <SidebarGroupContent>
+                                                    <SidebarMenu>
+                                                        <SidebarMenuItem>
+                                                            <SidebarMenuButton className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                                                                <CreditCard className="h-4 w-4" />
+                                                                <span>Billing</span>
+                                                            </SidebarMenuButton>
+                                                        </SidebarMenuItem>
+                                                    </SidebarMenu>
+                                                </SidebarGroupContent>
+                                            </SidebarGroup>
+                                        </SidebarContent>
+                                        <SidebarFooter className="border-t p-4 bg-background">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <button className="flex items-center gap-2 w-full hover:bg-accent rounded-md p-2 transition-colors">
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarFallback>JD</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex flex-col flex-1 text-left">
+                                                            <span className="text-sm font-medium">John Doe</span>
+                                                            <span className="text-xs text-muted-foreground">john@example.com</span>
+                                                        </div>
+                                                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                    </button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-56">
+                                                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem>
+                                                        <User className="mr-2 h-4 w-4" />
+                                                        Profile
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem>
+                                                        <Settings className="mr-2 h-4 w-4" />
+                                                        Settings
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem>
+                                                        Log out
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </SidebarFooter>
+                                    </Sidebar>
+                                    <div className="flex-1 p-6 bg-background" data-sidebar="content">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <SidebarTrigger />
+                                            <h2 className="text-lg font-semibold">Main Content</h2>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground">
+                                            Click the toggle button to collapse/expand the sidebar.
+                                        </p>
+                                    </div>
+                                </div>
+                            </SidebarProvider>
                         </CardContent>
                     </Card>
                 )
