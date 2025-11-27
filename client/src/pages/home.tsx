@@ -1,6 +1,6 @@
 
-export default function Home() {
+export function Home() {
   return <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <p>Start prompting (or editing) to see magic happen :)</p>
-    </div>;
+    <p>Start prompting (or editing) to see magic happen :)</p>
+  </div>;
 }

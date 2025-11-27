@@ -4,9 +4,9 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import ComponentShowcase from "@/pages/component-showcase";
+import { NotFound } from "@/pages/not-found";
+import { Home } from "@/pages/home";
+import { ComponentShowcase } from "@/pages/component-showcase";
 
 function Router() {
   return (
@@ -18,7 +18,7 @@ function Router() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="react-spa-theme">
       <QueryClientProvider client={queryClient}>
@@ -30,5 +30,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;

@@ -212,7 +212,7 @@ const COMPONENTS: ComponentName[] = [
     "Toggle", "Toggle Group", "Tooltip"
 ]
 
-export default function ComponentShowcase() {
+export function ComponentShowcase() {
     const [selectedComponent, setSelectedComponent] = useState<ComponentName>("Button")
     const [progress] = useState(60)
     const [date, setDate] = useState<Date | undefined>(new Date())
@@ -573,7 +573,7 @@ export default function ComponentShowcase() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label>Select a fruit</Label>
-                                <Select>
+                                <Select defaultValue="apple">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Choose one" />
                                     </SelectTrigger>
@@ -2206,43 +2206,35 @@ export default function ComponentShowcase() {
                                             <NavigationMenuContent>
                                                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                                                     <li>
-                                                        <NavigationMenuLink asChild>
-                                                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                                                                <div className="text-sm font-medium leading-none">Alert Dialog</div>
-                                                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                                                    A modal dialog that interrupts the user
-                                                                </p>
-                                                            </a>
+                                                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                                                            <div className="text-sm font-medium leading-none">Alert Dialog</div>
+                                                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                                                A modal dialog that interrupts the user
+                                                            </p>
                                                         </NavigationMenuLink>
                                                     </li>
                                                     <li>
-                                                        <NavigationMenuLink asChild>
-                                                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                                                                <div className="text-sm font-medium leading-none">Hover Card</div>
-                                                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                                                    For sighted users to preview content
-                                                                </p>
-                                                            </a>
+                                                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                                                            <div className="text-sm font-medium leading-none">Hover Card</div>
+                                                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                                                For sighted users to preview content
+                                                            </p>
                                                         </NavigationMenuLink>
                                                     </li>
                                                     <li>
-                                                        <NavigationMenuLink asChild>
-                                                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                                                                <div className="text-sm font-medium leading-none">Progress</div>
-                                                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                                                    Displays progress of a task
-                                                                </p>
-                                                            </a>
+                                                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                                                            <div className="text-sm font-medium leading-none">Progress</div>
+                                                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                                                Displays progress of a task
+                                                            </p>
                                                         </NavigationMenuLink>
                                                     </li>
                                                     <li>
-                                                        <NavigationMenuLink asChild>
-                                                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                                                                <div className="text-sm font-medium leading-none">Scroll Area</div>
-                                                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                                                    Augments native scroll functionality
-                                                                </p>
-                                                            </a>
+                                                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                                                            <div className="text-sm font-medium leading-none">Scroll Area</div>
+                                                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                                                Augments native scroll functionality
+                                                            </p>
                                                         </NavigationMenuLink>
                                                     </li>
                                                 </ul>
