@@ -323,7 +323,7 @@ function isNavigationRequest(req: import("http").IncomingMessage) {
 
 function injectHeadTag(html: string, isIframe: boolean = false) {
   let result = html;
-  
+
   // Always inject rofy-badge.js (without iframe condition)
   if (!result.includes('data-rofy="badge"')) {
     const badgeTag = `<script type="module" src="https://preview.rezzo.dev/js/rofy-badge.js" data-rofy="badge" defer></script>`;
@@ -335,7 +335,7 @@ function injectHeadTag(html: string, isIframe: boolean = false) {
       result = `${result}\n${badgeTag}`;
     }
   }
-  
+
   // Only inject reviewer.js for iframe navigations
   if (isIframe && !result.includes('data-rofy="console-capture"')) {
     const reviewerTag = `<script type="module" src="https://preview.rezzo.dev/js/reviewer.js" data-rofy="console-capture" defer></script>`;
@@ -347,7 +347,7 @@ function injectHeadTag(html: string, isIframe: boolean = false) {
       result = `${result}\n${reviewerTag}`;
     }
   }
-  
+
   return result;
 }
 

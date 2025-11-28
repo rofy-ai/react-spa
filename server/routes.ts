@@ -75,45 +75,43 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   app.post("/api/rofyDownloadFiles", async (req, res) => {
-  try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const { projectName } = req.body;
-    const sanitized = projectName.replace(/[^a-zA-Z0-9-_]/g, "_");
-    const zipPath = await createProjectZip({ projectName: sanitized });
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const { projectName } = req.body;
+      const sanitized = projectName.replace(/[^a-zA-Z0-9-_]/g, "_");
+      const zipPath = await createProjectZip({ projectName: sanitized });
 
-    const zipExists = await fs.access(zipPath).then(() => true).catch(() => false);
-    if (!zipExists) {
-      return res.status(500).json({ success: false, error: "Zip creation failed" });
+      const zipExists = await fs.access(zipPath).then(() => true).catch(() => false);
+      if (!zipExists) {
+        return res.status(500).json({ success: false, error: "Zip creation failed" });
+      }
+
+      const fileName = path.basename(zipPath);
+      const publicPath = `/downloads/${fileName}`;
+      const publicDir = path.join(__dirname, "../public/downloads");
+      const dirExists = await fs.access(publicDir).then(() => true).catch(() => false);
+      if (!dirExists) {
+        await fs.mkdir(publicDir, { recursive: true });
+      }
+
+      const publicFilePath = path.join(publicDir, fileName);
+
+      // Move file to public folder
+      await fs.rename(zipPath, publicFilePath);
+
+      await fetch("http://localhost:5001/api/restart-backend", {
+        method: "POST",
+      }); return res.json({
+        success: true,
+        downloadUrl: publicPath, // relative browser-accessible path
+      });
+
+    } catch (err) {
+      console.error("Error in rofyDownloadFiles:", err);
+      return res.status(500).json({ success: false, error: "Internal server error" });
     }
-
-    const fileName = path.basename(zipPath);
-    const publicPath = `/downloads/${fileName}`;
-    const publicDir = path.join(__dirname, "../public/downloads");
-    const dirExists = await fs.access(publicDir).then(() => true).catch(() => false);
-    if (!dirExists) {
-      await fs.mkdir(publicDir, { recursive: true });
-    }
-
-    const publicFilePath = path.join(publicDir, fileName);
-
-    // Move file to public folder
-    await fs.rename(zipPath, publicFilePath);
-
-    await fetch("http://localhost:5001/api/restart-backend", {
-      method: "POST",
-    });
-
-    return res.json({
-      success: true,
-      downloadUrl: publicPath, // relative browser-accessible path
-    });
-
-  } catch (err) {
-    console.error("Error in rofyDownloadFiles:", err);
-    return res.status(500).json({ success: false, error: "Internal server error" });
-  }
-});
+  });
 
 
   // const httpServer = createServer(app);

@@ -75,6 +75,7 @@ react-spa/
 ├── client/                          # Frontend React application
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── auth-forms.tsx       # Pre-built login/register forms
 │   │   │   ├── mode-toggle.tsx      # Theme toggle component
 │   │   │   ├── theme-provider.tsx   # Theme context provider
 │   │   │   └── ui/                  # shadcn/ui components (48 components)
@@ -193,6 +194,7 @@ import { ComponentName } from "@/components/ui/component-name"
 - **Alert** - Contextual feedback messages (Alert, AlertTitle, AlertDescription)
 - **Alert Dialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, DialogContent, AlertDialogAction, AlertDialogCancel, etc.)
 - **Aspect Ratio** - Maintain responsive aspect ratios
+- **Auth Forms** - Pre-built login and registration forms with validation (located at `@/components/auth-forms`; includes tabs for login/register, social auth buttons, form validation with zod and react-hook-form)
 - **Avatar** - User profile images with fallback (Avatar, AvatarImage, AvatarFallback)
 - **Badge** - Status and category indicators (variants: default, secondary, destructive, outline, info, success, warning, error, primary)
 - **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbEllipsis)

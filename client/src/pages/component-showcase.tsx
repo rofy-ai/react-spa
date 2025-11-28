@@ -205,11 +205,12 @@ import {
 } from "@/components/ui/resizable"
 import { AlertCircle, Info, Home, ChevronRight, Calendar as CalendarIcon, Menu, Twitter, Github, Linkedin } from "lucide-react"
 import { useState } from "react"
+import { AuthForms } from "@/components/auth-forms"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 type ComponentName =
     | "Accordion" | "Alert" | "Alert Dialog" | "Aspect Ratio"
-    | "Avatar" | "Badge" | "Breadcrumb" | "Button" | "Button Group"
+    | "Auth" | "Avatar" | "Badge" | "Breadcrumb" | "Button" | "Button Group"
     | "Calendar" | "Card" | "Carousel"
     | "Checkbox" | "Collapsible" | "Command" | "Context Menu"
     | "Dialog" | "Draggable" | "Dropdown Menu" | "Form"
@@ -223,7 +224,7 @@ type ComponentName =
 
 const COMPONENTS: ComponentName[] = [
     "Accordion", "Alert", "Alert Dialog", "Aspect Ratio",
-    "Avatar", "Badge", "Breadcrumb", "Button", "Button Group",
+    "Auth", "Avatar", "Badge", "Breadcrumb", "Button", "Button Group",
     "Calendar", "Card", "Carousel",
     "Checkbox", "Collapsible", "Command", "Context Menu",
     "Dialog", "Draggable", "Dropdown Menu", "Footer", "Form",
@@ -711,6 +712,15 @@ export function ComponentShowcase() {
                             </div>
                         </CardContent>
                     </Card>
+                )
+
+            case "Auth":
+                return (
+                    <div className="space-y-6">
+                        <div className="flex justify-center">
+                            <AuthForms />
+                        </div>
+                    </div>
                 )
 
             case "Avatar":
