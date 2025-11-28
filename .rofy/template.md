@@ -669,7 +669,7 @@ export default function MyPage() {
 ### Creating API Routes
 Add routes to `server/backend-routes.ts`:
 
-**Example Structure (DO NOT MODIFY THIS TEMPLATE):**
+**Example Structure for API (DO NOT MODIFY THIS TEMPLATE):**
 ```typescript
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
@@ -714,6 +714,73 @@ export async function registerBackendRoutes(app: Express): Promise<Server> {
   console.log("✅ Backend routes registered"); // DO NOT MODIFY
   return createServer(app); // DO NOT MODIFY
 }
+```
+
+**Example structure for creating MongoDB Model**
+```typescript
+import mongoose, { Schema, Document, Model } from "mongoose";
+import bcrypt from "bcryptjs";
+
+export interface IUser extends Document {
+  email: string;
+  password: string;
+  username: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  comparePassword(candidate: string): Promise<boolean>;
+}
+
+const userSchema = new Schema<IUser>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+/**
+ * 🔐 Password Hash Middleware (Mongoose 9+)
+ * NO next(), async middleware returns a promise automatically.
+ */
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+/**
+ * 🔐 Compare Password Method
+ */
+userSchema.methods.comparePassword = async function (
+  candidate: string
+): Promise<boolean> {
+  return bcrypt.compare(candidate, this.password);
+};
+
+export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+
 ```
 
 **When adding new endpoints:**
