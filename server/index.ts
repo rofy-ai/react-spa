@@ -321,12 +321,34 @@ function isNavigationRequest(req: import("http").IncomingMessage) {
   );
 }
 
-function injectHeadTag(html: string) {
-  if (html.includes('data-rofy="console-capture"')) return html;
-  const tag = `<script type="module" src="https://preview.rezzo.dev/js/reviewer.js" data-rofy="console-capture" defer></script>`;
-  if (html.includes("</head>")) return html.replace("</head>", `${tag}</head>`);
-  if (html.includes("</body>")) return html.replace("</body>", `${tag}</body>`);
-  return `${html}\n${tag}`;
+function injectHeadTag(html: string, isIframe: boolean = false) {
+  let result = html;
+  
+  // Always inject rofy-badge.js (without iframe condition)
+  if (!result.includes('data-rofy="badge"')) {
+    const badgeTag = `<script type="module" src="https://preview.rezzo.dev/js/rofy-badge.js" data-rofy="badge" defer></script>`;
+    if (result.includes("</head>")) {
+      result = result.replace("</head>", `${badgeTag}</head>`);
+    } else if (result.includes("</body>")) {
+      result = result.replace("</body>", `${badgeTag}</body>`);
+    } else {
+      result = `${result}\n${badgeTag}`;
+    }
+  }
+  
+  // Only inject reviewer.js for iframe navigations
+  if (isIframe && !result.includes('data-rofy="console-capture"')) {
+    const reviewerTag = `<script type="module" src="https://preview.rezzo.dev/js/reviewer.js" data-rofy="console-capture" defer></script>`;
+    if (result.includes("</head>")) {
+      result = result.replace("</head>", `${reviewerTag}</head>`);
+    } else if (result.includes("</body>")) {
+      result = result.replace("</body>", `${reviewerTag}</body>`);
+    } else {
+      result = `${result}\n${reviewerTag}`;
+    }
+  }
+  
+  return result;
 }
 
 
@@ -483,8 +505,8 @@ if (app.get("env") === "development") {
           const isHtml = proxyRes.headers['content-type']?.includes('text/html');
           const isNav = isNavigationRequest(req);
 
-          // Only inject into HTML responses for navigation requests
-          if (!isHtml || !isNav) {
+          // Only inject into HTML responses
+          if (!isHtml) {
             res.writeHead(proxyRes.statusCode || 200, proxyRes.headers as any);
             proxyRes.pipe(res);
             return;
@@ -494,7 +516,7 @@ if (app.get("env") === "development") {
           proxyRes.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
           proxyRes.on("end", () => {
             let body = Buffer.concat(chunks).toString("utf8");
-            body = injectHeadTag(body);
+            body = injectHeadTag(body, isNav);
 
             // Fix headers for the modified payload
             const headers = { ...(proxyRes.headers as any) };
