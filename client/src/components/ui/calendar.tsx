@@ -16,48 +16,48 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-6", className)}
+      className={cn("p-6 relative", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-5",
-        caption: "flex justify-center pt-1 relative items-center mb-1",
+        month_caption: "flex justify-center pt-1 relative items-center mb-4",
         caption_label: "text-lg font-bold",
-        nav: "space-x-1 flex items-center",
-        nav_button: cn(
+        nav: "flex items-center justify-between absolute inset-x-0 top-6",
+        button_previous: cn(
           buttonVariants({ variant: "outline" }),
           "h-9 w-9 bg-transparent p-0 hover:bg-accent border-none transition-all"
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
-        table: "w-full border-collapse space-y-1",
-        head_row: "flex justify-between mb-2",
-        head_cell:
-          "text-muted-foreground/60 rounded-md w-12 font-medium text-sm",
-        row: "flex w-full mt-1 justify-between",
-        cell: "relative h-12 w-12 text-center text-sm p-0 focus-within:relative focus-within:z-20",
-        day: cn(
+        button_next: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-9 w-9 bg-transparent p-0 hover:bg-accent border-none transition-all"
+        ),
+        month_grid: "w-full border-collapse",
+        weekdays: "flex",
+        weekday:
+          "text-muted-foreground/60 rounded-md w-12 font-medium text-sm text-center",
+        week: "flex w-full mt-2",
+        day: "relative h-12 w-12 text-center text-sm p-0 focus-within:relative focus-within:z-20",
+        day_button: cn(
           buttonVariants({ variant: "ghost" }),
           "h-12 w-12 p-0 font-medium text-base aria-selected:opacity-100 rounded-xl hover:bg-accent/50 transition-all hover:scale-105"
         ),
-        day_range_end: "day-range-end",
-        day_selected:
+        range_end: "day-range-end",
+        selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-xl shadow-lg font-bold scale-105 ring-2 ring-primary/20 ring-offset-2",
-        day_today: "bg-muted/50 text-foreground font-bold rounded-xl border-2 border-primary",
-        day_outside:
+        today: "bg-muted/50 text-foreground font-bold rounded-xl border-2 border-primary",
+        outside:
           "day-outside text-muted-foreground/30 aria-selected:bg-accent/50 aria-selected:text-muted-foreground opacity-50",
-        day_disabled: "text-muted-foreground/20 opacity-30 line-through",
-        day_range_middle:
+        disabled: "text-muted-foreground/20 opacity-30 line-through",
+        range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-xl",
-        day_hidden: "invisible",
+        hidden: "invisible",
         ...classNames,
       }}
       components={{
-        IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("h-5 w-5", className)} {...props} />
-        ),
-        IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("h-5 w-5", className)} {...props} />
-        ),
+        Chevron: ({ orientation, ...props }) => {
+          const Icon = orientation === "left" ? ChevronLeft : ChevronRight
+          return <Icon className="h-5 w-5" {...props} />
+        },
       }}
       {...props}
     />
