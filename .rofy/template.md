@@ -75,10 +75,59 @@ react-spa/
 ├── client/                          # Frontend React application
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── auth-forms.tsx       # Pre-built login/register forms
 │   │   │   ├── mode-toggle.tsx      # Theme toggle component
 │   │   │   ├── theme-provider.tsx   # Theme context provider
-│   │   │   └── ui/                  # shadcn/ui components (48 components)
+│   │   │   └── ui/                  # shadcn/ui components (49 components, PascalCase naming)
+│   │   │       ├── Accordion.tsx
+│   │   │       ├── Alert.tsx
+│   │   │       ├── AlertDialog.tsx
+│   │   │       ├── AspectRatio.tsx
+│   │   │       ├── AuthForms.tsx
+│   │   │       ├── Avatar.tsx
+│   │   │       ├── Badge.tsx
+│   │   │       ├── Breadcrumb.tsx
+│   │   │       ├── Button.tsx
+│   │   │       ├── ButtonGroup.tsx
+│   │   │       ├── Calendar.tsx
+│   │   │       ├── Card.tsx
+│   │   │       ├── Carousel.tsx
+│   │   │       ├── Checkbox.tsx
+│   │   │       ├── Collapsible.tsx
+│   │   │       ├── Command.tsx
+│   │   │       ├── ContextMenu.tsx
+│   │   │       ├── Dialog.tsx
+│   │   │       ├── Draggable.tsx
+│   │   │       ├── Drawer.tsx
+│   │   │       ├── DropdownMenu.tsx
+│   │   │       ├── Footer.tsx
+│   │   │       ├── Form.tsx
+│   │   │       ├── HoverCard.tsx
+│   │   │       ├── Input.tsx
+│   │   │       ├── InputOTP.tsx
+│   │   │       ├── Label.tsx
+│   │   │       ├── LoadingSpinner.tsx
+│   │   │       ├── Menubar.tsx
+│   │   │       ├── NavigationMenu.tsx
+│   │   │       ├── Pagination.tsx
+│   │   │       ├── Popover.tsx
+│   │   │       ├── Progress.tsx
+│   │   │       ├── RadioGroup.tsx
+│   │   │       ├── Resizable.tsx
+│   │   │       ├── ScrollArea.tsx
+│   │   │       ├── Select.tsx
+│   │   │       ├── Separator.tsx
+│   │   │       ├── Sheet.tsx
+│   │   │       ├── Sidebar.tsx
+│   │   │       ├── Skeleton.tsx
+│   │   │       ├── Slider.tsx
+│   │   │       ├── Sonner.tsx
+│   │   │       ├── Switch.tsx
+│   │   │       ├── Table.tsx
+│   │   │       ├── Tabs.tsx
+│   │   │       ├── Textarea.tsx
+│   │   │       ├── Toggle.tsx
+│   │   │       ├── ToggleGroup.tsx
+│   │   │       └── Tooltip.tsx
 │   │   ├── pages/                   # Route components
 │   │   │   ├── home.tsx             # Homepage
 │   │   │   ├── not-found.tsx        # 404 page
@@ -179,7 +228,7 @@ react-spa/
 
 ## 🎨 UI COMPONENTS (shadcn/ui)
 
-**Total Components**: 48
+**Total Components**: 49
 
 **Import Pattern**:
 All UI components follow this pattern:
@@ -194,7 +243,7 @@ import { ComponentName } from "@/components/ui/ComponentName"
 - **Alert** - Contextual feedback messages (Alert, AlertTitle, AlertDescription)
 - **AlertDialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, DialogContent, AlertDialogAction, AlertDialogCancel, etc.)
 - **AspectRatio** - Maintain responsive aspect ratios
-- **AuthForms** - Pre-built login and registration forms with validation (located at `@/components/auth-forms`; includes tabs for login/register, social auth buttons, form validation with zod and react-hook-form)
+- **AuthForms** - Pre-built login and registration forms with validation (includes tabs for login/register, social auth buttons, form validation with zod and react-hook-form)
 - **Avatar** - User profile images with fallback (Avatar, AvatarImage, AvatarFallback)
 - **Badge** - Status and category indicators (variants: default, secondary, destructive, outline, info, success, warning, error, primary)
 - **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbEllipsis)

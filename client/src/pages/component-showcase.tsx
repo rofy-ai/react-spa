@@ -205,7 +205,7 @@ import {
 } from "@/components/ui/Resizable"
 import { AlertCircle, Info, Home, ChevronRight, Calendar as CalendarIcon, Menu, Twitter, Github, Linkedin } from "lucide-react"
 import { useState } from "react"
-import { AuthForms } from "@/components/auth-forms"
+import { AuthForms } from "@/components/ui/AuthForms"
 import { ScrollArea } from "@/components/ui/ScrollArea"
 
 type ComponentName =
