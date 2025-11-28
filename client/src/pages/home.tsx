@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 export function Home() {
   return (
@@ -13,3 +13,4 @@ export function Home() {
     </div>
   );
 }
+

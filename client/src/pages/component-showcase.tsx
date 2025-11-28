@@ -1,28 +1,28 @@
-import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/Button"
+import { ButtonGroup } from "@/components/ui/ButtonGroup"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/Card"
+import { Input } from "@/components/ui/Input"
+import { Badge } from "@/components/ui/Badge"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert"
+import { Textarea } from "@/components/ui/Textarea"
 import { ModeToggle } from "@/components/mode-toggle"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Slider } from "@/components/ui/slider"
-import { Progress } from "@/components/ui/progress"
-import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar } from "@/components/ui/calendar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Checkbox } from "@/components/ui/Checkbox"
+import { Label } from "@/components/ui/Label"
+import { Switch } from "@/components/ui/Switch"
+import { Slider } from "@/components/ui/Slider"
+import { Progress } from "@/components/ui/Progress"
+import { Separator } from "@/components/ui/Separator"
+import { Skeleton } from "@/components/ui/Skeleton"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar"
+import { Calendar } from "@/components/ui/Calendar"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { User, Settings, Bell, CreditCard } from "lucide-react"
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/Accordion"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -33,8 +33,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
+} from "@/components/ui/AlertDialog"
+import { AspectRatio } from "@/components/ui/AspectRatio"
 import {
     Command,
     CommandEmpty,
@@ -42,15 +42,15 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+} from "@/components/ui/Command"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/Collapsible"
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/Carousel"
 import {
     Dialog,
     DialogContent,
@@ -59,7 +59,7 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/Dialog"
 import {
     ContextMenu,
     ContextMenuContent,
@@ -74,7 +74,7 @@ import {
     ContextMenuSub,
     ContextMenuSubContent,
     ContextMenuSubTrigger,
-} from "@/components/ui/context-menu"
+} from "@/components/ui/ContextMenu"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -90,7 +90,7 @@ import {
     DropdownMenuShortcut,
     DropdownMenuLabel,
     DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/DropdownMenu"
 import {
     Form,
     FormControl,
@@ -99,7 +99,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/Form"
 import { useForm } from "react-hook-form"
 import {
     Footer,
@@ -109,13 +109,13 @@ import {
     FooterLink,
     FooterText,
     FooterDivider,
-} from "@/components/ui/footer"
+} from "@/components/ui/Footer"
 import {
     InputOTP,
     InputOTPGroup,
     InputOTPSlot,
     InputOTPSeparator,
-} from "@/components/ui/input-otp"
+} from "@/components/ui/InputOTP"
 import {
     Menubar,
     MenubarContent,
@@ -130,9 +130,9 @@ import {
     MenubarSub,
     MenubarSubContent,
     MenubarSubTrigger,
-} from "@/components/ui/menubar"
-import { Toggle } from "@/components/ui/toggle"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+} from "@/components/ui/Menubar"
+import { Toggle } from "@/components/ui/Toggle"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/ToggleGroup"
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react"
 import { toast as sonnerToast } from "sonner"
 import {
@@ -144,7 +144,7 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/Sheet"
 import {
     Sidebar,
     SidebarContent,
@@ -158,8 +158,8 @@ import {
     SidebarMenuItem,
     SidebarProvider,
     SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Draggable } from "@/components/ui/draggable"
+} from "@/components/ui/Sidebar"
+import { Draggable } from "@/components/ui/Draggable"
 import {
     Table,
     TableBody,
@@ -168,17 +168,17 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/Table"
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+} from "@/components/ui/Select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/RadioGroup"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/Breadcrumb"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip"
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -187,7 +187,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/NavigationMenu"
 import {
     Pagination,
     PaginationContent,
@@ -196,45 +196,45 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+} from "@/components/ui/Pagination"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover"
 import {
     ResizablePanelGroup,
     ResizablePanel,
     ResizableHandle,
-} from "@/components/ui/resizable"
+} from "@/components/ui/Resizable"
 import { AlertCircle, Info, Home, ChevronRight, Calendar as CalendarIcon, Menu, Twitter, Github, Linkedin } from "lucide-react"
 import { useState } from "react"
 import { AuthForms } from "@/components/auth-forms"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea } from "@/components/ui/ScrollArea"
 
 type ComponentName =
-    | "Accordion" | "Alert" | "Alert Dialog" | "Aspect Ratio"
-    | "Auth" | "Avatar" | "Badge" | "Breadcrumb" | "Button" | "Button Group"
+    | "Accordion" | "Alert" | "AlertDialog" | "AspectRatio"
+    | "Auth" | "Avatar" | "Badge" | "Breadcrumb" | "Button" | "ButtonGroup"
     | "Calendar" | "Card" | "Carousel"
-    | "Checkbox" | "Collapsible" | "Command" | "Context Menu"
-    | "Dialog" | "Draggable" | "Dropdown Menu" | "Form"
-    | "Hover Card" | "Input" | "Input OTP" | "Label"
-    | "Menubar" | "Navigation Menu" | "Pagination" | "Popover"
-    | "Progress" | "Radio Group" | "Resizable" | "Scroll Area"
+    | "Checkbox" | "Collapsible" | "Command" | "ContextMenu"
+    | "Dialog" | "Draggable" | "DropdownMenu" | "Form"
+    | "HoverCard" | "Input" | "InputOTP" | "Label"
+    | "Menubar" | "NavigationMenu" | "Pagination" | "Popover"
+    | "Progress" | "RadioGroup" | "Resizable" | "ScrollArea"
     | "Select" | "Separator" | "Sheet" | "Sidebar"
     | "Skeleton" | "Slider" | "Sonner" | "Switch"
     | "Table" | "Tabs" | "Textarea"
-    | "Toggle" | "Toggle Group" | "Tooltip"
+    | "Toggle" | "ToggleGroup" | "Tooltip"
 
 const COMPONENTS: ComponentName[] = [
-    "Accordion", "Alert", "Alert Dialog", "Aspect Ratio",
-    "Auth", "Avatar", "Badge", "Breadcrumb", "Button", "Button Group",
+    "Accordion", "Alert", "AlertDialog", "AspectRatio",
+    "Auth", "Avatar", "Badge", "Breadcrumb", "Button", "ButtonGroup",
     "Calendar", "Card", "Carousel",
-    "Checkbox", "Collapsible", "Command", "Context Menu",
-    "Dialog", "Draggable", "Dropdown Menu", "Footer", "Form",
-    "Hover Card", "Input", "Input OTP", "Label",
-    "Menubar", "Navigation Menu", "Pagination", "Popover",
-    "Progress", "Radio Group", "Resizable", "Scroll Area",
+    "Checkbox", "Collapsible", "Command", "ContextMenu",
+    "Dialog", "Draggable", "DropdownMenu", "Footer", "Form",
+    "HoverCard", "Input", "InputOTP", "Label",
+    "Menubar", "NavigationMenu", "Pagination", "Popover",
+    "Progress", "RadioGroup", "Resizable", "ScrollArea",
     "Select", "Separator", "Sheet", "Sidebar",
     "Skeleton", "Slider", "Sonner", "Switch",
     "Table", "Tabs", "Textarea",
-    "Toggle", "Toggle Group", "Tooltip"
+    "Toggle", "ToggleGroup", "Tooltip"
 ]
 
 export function ComponentShowcase() {
@@ -307,7 +307,7 @@ export function ComponentShowcase() {
                     </div>
                 )
 
-            case "Button Group":
+            case "ButtonGroup":
                 return (
                     <div className="space-y-6">
                         <Card>
@@ -642,7 +642,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Radio Group":
+            case "RadioGroup":
                 return (
                     <Card>
                         <CardHeader>
@@ -1018,7 +1018,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Scroll Area":
+            case "ScrollArea":
                 return (
                     <Card>
                         <CardHeader>
@@ -1039,7 +1039,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Alert Dialog":
+            case "AlertDialog":
                 return (
                     <Card>
                         <CardHeader>
@@ -1089,7 +1089,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Aspect Ratio":
+            case "AspectRatio":
                 return (
                     <div className="space-y-6">
                         <Card>
@@ -1431,7 +1431,7 @@ export function ComponentShowcase() {
                     </div>
                 )
 
-            case "Context Menu":
+            case "ContextMenu":
                 return (
                     <Card>
                         <CardHeader>
@@ -1499,7 +1499,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Dropdown Menu":
+            case "DropdownMenu":
                 return (
                     <Card>
                         <CardHeader>
@@ -1762,7 +1762,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Input OTP":
+            case "InputOTP":
                 return (
                     <Card>
                         <CardHeader>
@@ -2064,7 +2064,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Toggle Group":
+            case "ToggleGroup":
                 return (
                     <Card>
                         <CardHeader>
@@ -2530,7 +2530,7 @@ export function ComponentShowcase() {
                     </Card>
                 )
 
-            case "Navigation Menu":
+            case "NavigationMenu":
                 return (
                     <Card>
                         <CardHeader>
@@ -2904,3 +2904,4 @@ export function ComponentShowcase() {
         </TooltipProvider>
     )
 }
+

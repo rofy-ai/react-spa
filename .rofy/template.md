@@ -184,7 +184,7 @@ react-spa/
 **Import Pattern**:
 All UI components follow this pattern:
 ```typescript
-import { ComponentName } from "@/components/ui/component-name"
+import { ComponentName } from "@/components/ui/ComponentName"
 ```
 
 ### Available Components
@@ -192,39 +192,39 @@ import { ComponentName } from "@/components/ui/component-name"
 #### Core Components
 - **Accordion** - Collapsible content sections (AccordionItem, AccordionTrigger, AccordionContent)
 - **Alert** - Contextual feedback messages (Alert, AlertTitle, AlertDescription)
-- **Alert Dialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, DialogContent, AlertDialogAction, AlertDialogCancel, etc.)
-- **Aspect Ratio** - Maintain responsive aspect ratios
-- **Auth Forms** - Pre-built login and registration forms with validation (located at `@/components/auth-forms`; includes tabs for login/register, social auth buttons, form validation with zod and react-hook-form)
+- **AlertDialog** - Modal confirmation dialogs (AlertDialog, AlertDialogTrigger, DialogContent, AlertDialogAction, AlertDialogCancel, etc.)
+- **AspectRatio** - Maintain responsive aspect ratios
+- **AuthForms** - Pre-built login and registration forms with validation (located at `@/components/auth-forms`; includes tabs for login/register, social auth buttons, form validation with zod and react-hook-form)
 - **Avatar** - User profile images with fallback (Avatar, AvatarImage, AvatarFallback)
 - **Badge** - Status and category indicators (variants: default, secondary, destructive, outline, info, success, warning, error, primary)
 - **Breadcrumb** - Navigation hierarchy (Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbEllipsis)
 - **Button** - Interactive button elements (variants: default, destructive, outline, secondary, ghost, link; sizes: sm, md, lg, xl, icon)
-- **Button Group** - Grouped button layouts
+- **ButtonGroup** - Grouped button layouts
 - **Calendar** - Date picker with modern design (48px × 48px cells, generous spacing)
 - **Card** - Content containers (Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter)
 - **Carousel** - Image/content sliders with embla-carousel (Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious)
 - **Checkbox** - Checkbox input with label support
 - **Collapsible** - Expandable content areas (Collapsible, CollapsibleTrigger, CollapsibleContent)
 - **Command** - Command palette with cmdk (Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem)
-- **Context Menu** - Right-click context menus (ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, etc.)
+- **ContextMenu** - Right-click context menus (ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, etc.)
 - **Dialog** - Modal dialogs (Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription)
 - **Draggable** - Drag-and-drop elements with Framer Motion (constraints, elastic, momentum options)
 - **Drawer** - Bottom drawer component with vaul (Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose)
-- **Dropdown Menu** - Dropdown menus (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, etc.)
+- **DropdownMenu** - Dropdown menus (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, etc.)
 - **Form** - Form components with React Hook Form integration (Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage)
-- **Hover Card** - Hover-triggered card popups (HoverCard, HoverCardTrigger, HoverCardContent)
+- **HoverCard** - Hover-triggered card popups (HoverCard, HoverCardTrigger, HoverCardContent)
 - **Input** - Text input fields
-- **Input OTP** - One-time password inputs (InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator)
+- **InputOTP** - One-time password inputs (InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator)
 - **Label** - Form field labels
-- **Loading Spinner** - Loading indicators (sizes: sm, md, lg)
+- **LoadingSpinner** - Loading indicators (sizes: sm, md, lg)
 - **Menubar** - Application menu bars (Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, etc.)
-- **Navigation Menu** - Navigation menus with dropdowns (NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink)
+- **NavigationMenu** - Navigation menus with dropdowns (NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink)
 - **Pagination** - Page navigation controls (Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis)
 - **Popover** - Popover overlays (Popover, PopoverTrigger, PopoverContent)
 - **Progress** - Progress bars
-- **Radio Group** - Radio button groups (RadioGroup, RadioGroupItem)
+- **RadioGroup** - Radio button groups (RadioGroup, RadioGroupItem)
 - **Resizable** - Resizable panel layouts (ResizablePanelGroup, ResizablePanel, ResizableHandle)
-- **Scroll Area** - Custom scrollable areas (ScrollArea, ScrollBar)
+- **ScrollArea** - Custom scrollable areas (ScrollArea, ScrollBar)
 - **Select** - Dropdown selects (Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel, SelectSeparator)
 - **Separator** - Visual dividers
 - **Sheet** - Side panel overlays (Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter; positions: top, bottom, left, right)
@@ -238,12 +238,12 @@ import { ComponentName } from "@/components/ui/component-name"
 - **Textarea** - Multi-line text inputs
 - **Toaster** - Toast notification container (for Sonner)
 - **Toggle** - Toggle buttons (variants: default, outline; sizes: sm, md, lg)
-- **Toggle Group** - Grouped toggle buttons (ToggleGroup, ToggleGroupItem; types: single, multiple)
+- **ToggleGroup** - Grouped toggle buttons (ToggleGroup, ToggleGroupItem; types: single, multiple)
 - **Tooltip** - Hover tooltips (Tooltip, TooltipTrigger, TooltipContent, TooltipProvider)
 
 ### Component Details & Props
 
-#### **Button** (`@/components/ui/button`)
+#### **Button** (`@/components/ui/Button`)
 **Exports**: `Button`, `buttonVariants`
 ```typescript
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -258,7 +258,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 <Button variant="outline" asChild><Link to="/home">Go</Link></Button>
 ```
 
-#### **Input** (`@/components/ui/input`)
+#### **Input** (`@/components/ui/Input`)
 **Exports**: `Input`
 ```typescript
 type InputProps = React.ComponentProps<"input">
@@ -269,7 +269,7 @@ type InputProps = React.ComponentProps<"input">
 <Input type="email" className="max-w-sm" />
 ```
 
-#### **Textarea** (`@/components/ui/textarea`)
+#### **Textarea** (`@/components/ui/Textarea`)
 **Exports**: `Textarea`
 ```typescript
 type TextareaProps = React.ComponentProps<"textarea">
@@ -279,7 +279,7 @@ type TextareaProps = React.ComponentProps<"textarea">
 <Textarea placeholder="Type your message here" />
 ```
 
-#### **Label** (`@/components/ui/label`)
+#### **Label** (`@/components/ui/Label`)
 **Exports**: `Label`
 ```typescript
 type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
@@ -290,7 +290,7 @@ type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 <Input id="email" type="email" />
 ```
 
-#### **Card** (`@/components/ui/card`)
+#### **Card** (`@/components/ui/Card`)
 **Exports**: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 ```typescript
 // All extend React.HTMLAttributes<HTMLDivElement>
@@ -307,7 +307,7 @@ type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 </Card>
 ```
 
-#### **Dialog** (`@/components/ui/dialog`)
+#### **Dialog** (`@/components/ui/Dialog`)
 **Exports**: `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `DialogPortal`, `DialogClose`, `DialogOverlay`
 ```typescript
 // Dialog is RadixUI Dialog.Root
@@ -332,7 +332,7 @@ type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 </Dialog>
 ```
 
-#### **Form** (`@/components/ui/form`)
+#### **Form** (`@/components/ui/Form`)
 **Exports**: `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`
 ```typescript
 // Form is FormProvider from react-hook-form
@@ -367,7 +367,7 @@ const form = useForm({
 </Form>
 ```
 
-#### **Select** (`@/components/ui/select`)
+#### **Select** (`@/components/ui/Select`)
 **Exports**: `Select`, `SelectGroup`, `SelectValue`, `SelectTrigger`, `SelectContent`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 **Usage**:
 ```tsx
